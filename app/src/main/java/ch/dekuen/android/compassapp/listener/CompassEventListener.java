@@ -21,10 +21,12 @@ public class CompassEventListener implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             accelerationMeasurements = event.values;
-        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+        }
+        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             magneticMeasurements = event.values;
+        }
         if (accelerationMeasurements != null && magneticMeasurements != null) {
             Optional<Float> optional = getAzimut();
             if(optional.isPresent())
