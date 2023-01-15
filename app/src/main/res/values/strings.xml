@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CompassApp</string>
+    <string name="zero_degrees">0.0 °</string>
+    <string name="compass_icon">compass_icon</string>
+</resources>
