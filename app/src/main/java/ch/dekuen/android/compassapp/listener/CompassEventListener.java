@@ -4,12 +4,12 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public class CompassEventListener implements SensorEventListener {
-
     private final Consumer<Float> azimutConsumer;
 
     private float[] accelerationMeasurements;
@@ -21,19 +21,35 @@ public class CompassEventListener implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        if(event == null) {
+            Log.e(getClass().getName(), "SensorEvent is null");
+            return;
+        }
+        Sensor sensor = event.sensor;
+        if(sensor == null) {
+            Log.e(getClass().getName(), "Sensor is null");
+            return;
+        }
+        int sensorType = sensor.getType();
+        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
             accelerationMeasurements = event.values;
-        }
-        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+        } else if (sensorType == Sensor.TYPE_MAGNETIC_FIELD) {
             magneticMeasurements = event.values;
+        } else {
+            Log.e(getClass().getName(), "Unexpected sensor type");
+            return;
         }
-        if (accelerationMeasurements != null && magneticMeasurements != null) {
-            Optional<Float> optional = getAzimut();
-            if(optional.isPresent())
-            {
-                Float azimut = optional.get();
-                azimutConsumer.accept(azimut);
-            }
+        if (accelerationMeasurements == null) {
+            Log.i(getClass().getName(), "accelerationMeasurements is null");
+            return;
+        } else if (magneticMeasurements == null) {
+            Log.i(getClass().getName(), "magneticMeasurements is null");
+            return;
+        }
+        Optional<Float> optional = getAzimut();
+        if (optional.isPresent()) {
+            Float azimut = optional.get();
+            azimutConsumer.accept(azimut);
         }
     }
 
@@ -42,18 +58,15 @@ public class CompassEventListener implements SensorEventListener {
         // not in use
     }
 
-    private Optional<Float> getAzimut()
-    {
-        float[] R = new float[9];
-        float[] I = new float[9];
-        boolean success = SensorManager.getRotationMatrix(R, I, accelerationMeasurements, magneticMeasurements);
-        if(!success)
-        {
+    private Optional<Float> getAzimut() {
+        float[] matrixR = new float[9];
+        boolean success = SensorManager.getRotationMatrix(matrixR, null, accelerationMeasurements, magneticMeasurements);
+        if (!success) {
             return Optional.empty();
         }
         float[] orientation = new float[3];
         // orientation contains: azimut, pitch and roll
-        SensorManager.getOrientation(R, orientation);
+        SensorManager.getOrientation(matrixR, orientation);
         // get angle around the z-axis rotated
         float azimut = orientation[0];
         return Optional.of(azimut);

@@ -35,6 +35,8 @@ android {
         unitTests.all {
             useJUnitPlatform()
         }
+        // prevent all Android classes from doing anything in unit tests
+        unitTests.returnDefaultValues = true
     }
 }
 
