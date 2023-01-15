@@ -49,12 +49,32 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
+
     implementation 'androidx.test.ext:junit:1.1.5'
     testImplementation 'junit:junit:4.13.2'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
-    // testImplementation 'org.mockito:mockito-junit-jupiter:5.0.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.0.0'
+
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
     // testRuntimeOnly 'org.mockito:mockito-junit-jupiter:5.0.0'
+
+
     // androidTestImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+
+    //  androidTestImplementation "androidx.test.espresso:espresso-core:3.3.0"
+    //  androidTestImplementation "androidx.test:runner:1.5.2"
+    androidTestImplementation "androidx.test:core:1.5.0"
+    //      androidTestImplementation "androidx.test.ext:junit:1.1.2"
+    androidTestImplementation "androidx.test:rules:1.5.0"
+
+    // To use the androidx.test.runner APIs
+    androidTestImplementation "androidx.test:runner:1.5.2"
+
 }
