@@ -9,8 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
 
-    <color name="colorAccent">#AD352C</color>
-
-
-    <color name="ic_launcher_background">#346B4B</color>
+    <color name="colorAzimutText">#AD352C</color>
 </resources>
