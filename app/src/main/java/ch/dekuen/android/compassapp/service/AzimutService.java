@@ -1,4 +1,4 @@
-package ch.dekuen.android.compassapp.listener;
+package ch.dekuen.android.compassapp.service;
 
 import android.hardware.SensorManager;
 import android.util.Log;
@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import java.util.Optional;
 
 public class AzimutService {
-    Optional<Float> getAzimut(@NonNull float[] accelerationMeasurements, @NonNull float[] magneticMeasurements) {
+    public Optional<Float> getAzimut(@NonNull float[] accelerationMeasurements, @NonNull float[] magneticMeasurements) {
         try {
             float[] matrixR = new float[9];
             boolean success = SensorManager.getRotationMatrix(matrixR, null, accelerationMeasurements, magneticMeasurements);

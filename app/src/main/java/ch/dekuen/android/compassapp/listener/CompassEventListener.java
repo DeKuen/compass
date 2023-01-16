@@ -8,6 +8,8 @@ import android.util.Log;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import ch.dekuen.android.compassapp.service.AzimutService;
+
 public class CompassEventListener implements SensorEventListener {
     private final AzimutService azimutService;
     private final Consumer<Float> azimutConsumer;

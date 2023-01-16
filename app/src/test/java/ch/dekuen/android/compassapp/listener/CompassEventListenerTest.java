@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import ch.dekuen.android.compassapp.service.AzimutService;
+
 @RunWith(RobolectricTestRunner.class)
 public class CompassEventListenerTest {
     private CompassEventListener testee;

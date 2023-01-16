@@ -11,6 +11,8 @@ import org.robolectric.RobolectricTestRunner;
 
 import java.util.Optional;
 
+import ch.dekuen.android.compassapp.service.AzimutService;
+
 @RunWith(RobolectricTestRunner.class)
 public class AzimutServiceTest {
     private static final float G = 9.81f;
