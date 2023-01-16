@@ -1,4 +1,4 @@
-package ch.dekuen.android.compassapp.listener;
+package ch.dekuen.android.compassapp.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -10,8 +10,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 import java.util.Optional;
-
-import ch.dekuen.android.compassapp.service.AzimutService;
 
 @RunWith(RobolectricTestRunner.class)
 public class AzimutServiceTest {

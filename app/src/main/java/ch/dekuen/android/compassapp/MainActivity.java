@@ -14,8 +14,8 @@ import ch.dekuen.android.compassapp.service.CompassViewService;
 
 public class MainActivity extends AppCompatActivity {
 
-    // for fast response, alternatively use SENSOR_DELAY_UI
-    private static final int SAMPLING_PERIOD_US = SensorManager.SENSOR_DELAY_GAME;
+    // SENSOR_DELAY_GAME for fast response, alternatively use SENSOR_DELAY_UI or SENSOR_DELAY_NORMAL
+    private static final int SAMPLING_PERIOD_US = SensorManager.SENSOR_DELAY_NORMAL;
 
     private CompassEventListener compassEventListener;
 
@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
         TextView azimutTextView = findViewById(R.id.azimutTextView);
         CompassViewService compassViewService = new CompassViewService(compassImageView, azimutTextView);
         compassEventListener = new CompassEventListener(new AzimutService(), compassViewService::updateCompass);
-        // initialize your android device sensor capabilities
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
 

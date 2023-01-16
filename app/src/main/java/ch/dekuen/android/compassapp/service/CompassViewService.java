@@ -6,26 +6,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class CompassViewService {
-
-    // define the compass picture that will be use
     private final ImageView compassImageView;
     private final TextView azimutTextView;
-
-    // record the angle turned of the compass picture
-    private float lastAzimut = 0f;
+    private int lastDegree = 0;
 
     public CompassViewService(ImageView compassImageView, TextView azimutTextView) {
         this.compassImageView = compassImageView;
         this.azimutTextView = azimutTextView;
     }
 
-    public void updateCompass(float azimut)
+    public void updateCompass(float azimutExact)
     {
-        String text = Math.round(azimut * 10f) / 10f + " °";
+        int azimut = Math.round(azimutExact);
+        if(azimut == -lastDegree)
+        {
+            return;
+        }
+        String text = azimut + " °";
         azimutTextView.setText(text);
         // rotation animation - reverse turn azimut degrees
         RotateAnimation ra = new RotateAnimation(
-                lastAzimut,
+                lastDegree,
                 -azimut,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
@@ -35,6 +36,6 @@ public class CompassViewService {
         ra.setDuration(210);
         // Start animation of compass image
         compassImageView.startAnimation(ra);
-        lastAzimut = -azimut;
+        lastDegree = -azimut;
     }
 }
