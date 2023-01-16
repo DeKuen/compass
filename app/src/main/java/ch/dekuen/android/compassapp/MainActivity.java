@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import ch.dekuen.android.compassapp.listener.AzimutService;
 import ch.dekuen.android.compassapp.listener.CompassEventListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     // for fast response, alternatively use SENSOR_DELAY_UI
     private static final int SAMPLING_PERIOD_US = SensorManager.SENSOR_DELAY_GAME;
 
-    private final CompassEventListener compassEventListener = new CompassEventListener(this::updateAzimut);
+    private final CompassEventListener compassEventListener = new CompassEventListener(new AzimutService(), this::updateAzimut);
 
     // device sensor manager
     private SensorManager sensorManager;

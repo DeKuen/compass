@@ -3,19 +3,20 @@ package ch.dekuen.android.compassapp.listener;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.util.Log;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public class CompassEventListener implements SensorEventListener {
+    private final AzimutService azimutService;
     private final Consumer<Float> azimutConsumer;
 
     private float[] accelerationMeasurements;
     private float[] magneticMeasurements;
 
-    public CompassEventListener(Consumer<Float> azimutConsumer) {
+    public CompassEventListener(AzimutService azimutService, Consumer<Float> azimutConsumer) {
+        this.azimutService = azimutService;
         this.azimutConsumer = azimutConsumer;
     }
 
@@ -46,7 +47,7 @@ public class CompassEventListener implements SensorEventListener {
             Log.i(getClass().getName(), "magneticMeasurements is null");
             return;
         }
-        Optional<Float> optional = getAzimut();
+        Optional<Float> optional = azimutService.getAzimut(accelerationMeasurements, magneticMeasurements);
         if (optional.isPresent()) {
             Float azimut = optional.get();
             azimutConsumer.accept(azimut);
@@ -56,19 +57,5 @@ public class CompassEventListener implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not in use
-    }
-
-    private Optional<Float> getAzimut() {
-        float[] matrixR = new float[9];
-        boolean success = SensorManager.getRotationMatrix(matrixR, null, accelerationMeasurements, magneticMeasurements);
-        if (!success) {
-            return Optional.empty();
-        }
-        float[] orientation = new float[3];
-        // orientation contains: azimut, pitch and roll
-        SensorManager.getOrientation(matrixR, orientation);
-        // get angle around the z-axis rotated
-        float azimut = orientation[0];
-        return Optional.of(azimut);
     }
 }
