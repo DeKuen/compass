@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class CompassViewService {
+    static final String DEGREE_POSTFIX = " °";
     private final ImageView compassImageView;
     private final TextView azimutTextView;
     private int lastDegree = 0;
@@ -22,20 +23,20 @@ public class CompassViewService {
         {
             return;
         }
-        String text = azimut + " °";
+        String text = azimut + DEGREE_POSTFIX;
         azimutTextView.setText(text);
         // rotation animation - reverse turn azimut degrees
-        RotateAnimation ra = new RotateAnimation(
+        RotateAnimation rotateAnimation = new RotateAnimation(
                 lastDegree,
                 -azimut,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
         // set the compass animation after the end of the reservation status
-        ra.setFillAfter(true);
+        rotateAnimation.setFillAfter(true);
         // set how long the animation for the compass image will take place
-        ra.setDuration(210);
+        rotateAnimation.setDuration(210);
         // Start animation of compass image
-        compassImageView.startAnimation(ra);
+        compassImageView.startAnimation(rotateAnimation);
         lastDegree = -azimut;
     }
 }
