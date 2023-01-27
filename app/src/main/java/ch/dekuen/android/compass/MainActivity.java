@@ -8,8 +8,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import ch.dekuen.android.compass.listener.CompassEventListener;
-import ch.dekuen.android.compass.service.AzimutService;
+import ch.dekuen.android.compass.azimut.CompassSensorEventListener;
 import ch.dekuen.android.compass.service.CompassViewService;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
     // SENSOR_DELAY_GAME for fast response, alternatively use SENSOR_DELAY_UI or SENSOR_DELAY_NORMAL
     private static final int SAMPLING_PERIOD_US = SensorManager.SENSOR_DELAY_NORMAL;
 
-    private CompassEventListener compassEventListener;
+    private CompassSensorEventListener compassSensorEventListener;
 
     // device sensor manager
     private SensorManager sensorManager;
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         // TextView that will display the azimut in degrees
         TextView azimutTextView = findViewById(R.id.azimutTextView);
         CompassViewService compassViewService = new CompassViewService(compassImageView, azimutTextView);
-        compassEventListener = new CompassEventListener(new AzimutService(), compassViewService::updateCompass);
+        compassSensorEventListener = new CompassSensorEventListener(compassViewService::updateCompass);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
 
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         // to stop the listener and save battery
-        sensorManager.unregisterListener(compassEventListener);
+        sensorManager.unregisterListener(compassSensorEventListener);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(compassEventListener, accelerometer, SAMPLING_PERIOD_US);
-        sensorManager.registerListener(compassEventListener, magnetometer, SAMPLING_PERIOD_US);
+        sensorManager.registerListener(compassSensorEventListener, accelerometer, SAMPLING_PERIOD_US);
+        sensorManager.registerListener(compassSensorEventListener, magnetometer, SAMPLING_PERIOD_US);
     }
 }

@@ -1,4 +1,4 @@
-package ch.dekuen.android.compass.listener;
+package ch.dekuen.android.compass.azimut;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -8,17 +8,14 @@ import android.util.Log;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import ch.dekuen.android.compass.service.AzimutService;
-
-public class CompassEventListener implements SensorEventListener {
-    private final AzimutService azimutService;
+public class CompassSensorEventListener implements SensorEventListener {
+    private AzimutService azimutService = new AzimutService();
     private final Consumer<Float> azimutConsumer;
 
     private float[] accelerationMeasurements;
     private float[] magneticMeasurements;
 
-    public CompassEventListener(AzimutService azimutService, Consumer<Float> azimutConsumer) {
-        this.azimutService = azimutService;
+    public CompassSensorEventListener(Consumer<Float> azimutConsumer) {
         this.azimutConsumer = azimutConsumer;
     }
 
@@ -59,5 +56,9 @@ public class CompassEventListener implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not in use
+    }
+
+    void setAzimutService(AzimutService azimutService) {
+        this.azimutService = azimutService;
     }
 }

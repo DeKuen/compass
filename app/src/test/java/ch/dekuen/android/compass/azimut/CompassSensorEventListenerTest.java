@@ -1,4 +1,4 @@
-package ch.dekuen.android.compass.listener;
+package ch.dekuen.android.compass.azimut;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,11 +24,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import ch.dekuen.android.compass.service.AzimutService;
-
 @RunWith(RobolectricTestRunner.class)
-public class CompassEventListenerTest {
-    private CompassEventListener testee;
+public class CompassSensorEventListenerTest {
+    private CompassSensorEventListener testee;
     private final List<Float> consumedFloats = new ArrayList<>();
     private AzimutService azimutService;
     private final Consumer<Float> floatConsumer = consumedFloats::add;
@@ -37,7 +35,8 @@ public class CompassEventListenerTest {
     public void before() {
         azimutService = mock(AzimutService.class);
         consumedFloats.clear();
-        testee = new CompassEventListener(azimutService, floatConsumer);
+        testee = new CompassSensorEventListener(floatConsumer);
+        testee.setAzimutService(azimutService);
     }
 
     @After

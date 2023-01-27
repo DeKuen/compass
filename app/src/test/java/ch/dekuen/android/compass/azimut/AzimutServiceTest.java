@@ -1,4 +1,4 @@
-package ch.dekuen.android.compass.service;
+package ch.dekuen.android.compass.azimut;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
