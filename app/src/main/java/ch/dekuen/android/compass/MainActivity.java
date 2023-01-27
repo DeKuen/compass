@@ -9,7 +9,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
-import ch.dekuen.android.compass.view.CompassViewService;
+import ch.dekuen.android.compass.view.CompassImageViewService;
+import ch.dekuen.android.compass.view.CompassTextViewService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,9 +30,11 @@ public class MainActivity extends AppCompatActivity {
         ImageView compassImageView = findViewById(R.id.compassImageView);
         // TextView that will display the azimut in degrees
         TextView azimutTextView = findViewById(R.id.azimutTextView);
-        CompassViewService compassViewService = new CompassViewService(compassImageView, azimutTextView);
+        CompassTextViewService textViewService = new CompassTextViewService(azimutTextView);
+        CompassImageViewService imageViewService = new CompassImageViewService(compassImageView);
         compassSensorEventListener = new CompassSensorEventListener();
-        compassSensorEventListener.addConsumer(compassViewService::updateCompass);
+        compassSensorEventListener.addListener(textViewService);
+        compassSensorEventListener.addListener(imageViewService);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
 

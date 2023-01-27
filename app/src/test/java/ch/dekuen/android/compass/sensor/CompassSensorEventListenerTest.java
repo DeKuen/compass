@@ -21,20 +21,21 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
+
+import ch.dekuen.android.compass.AzimutListener;
 
 @RunWith(RobolectricTestRunner.class)
 public class CompassSensorEventListenerTest {
     private static final float G = 9.81f;
     private CompassSensorEventListener testee;
     private final List<Float> consumedFloats = new ArrayList<>();
-    private final Consumer<Float> floatConsumer = consumedFloats::add;
+    private final AzimutListener listener = consumedFloats::add;
 
     @Before
     public void before() {
         consumedFloats.clear();
         testee = new CompassSensorEventListener();
-        testee.addConsumer(floatConsumer);
+        testee.addListener(listener);
     }
 
     @After

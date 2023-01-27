@@ -8,15 +8,16 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+
+import ch.dekuen.android.compass.AzimutListener;
 
 public class CompassSensorEventListener implements SensorEventListener {
-    private final List<Consumer<Float>> azimutConsumers = new ArrayList<>();
+    private final List<AzimutListener> listeners = new ArrayList<>();
     private float[] accelerationMeasurements;
     private float[] magneticMeasurements;
 
-    public void addConsumer(Consumer<Float> azimutConsumer) {
-        azimutConsumers.add(azimutConsumer);
+    public void addListener(AzimutListener listener) {
+        listeners.add(listener);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class CompassSensorEventListener implements SensorEventListener {
         SensorManager.getOrientation(matrixR, orientation);
         // get angle around the z-axis rotated
         float azimut = orientation[0];
-        azimutConsumers.forEach(consumer -> consumer.accept(azimut));
+        listeners.forEach(listener -> listener.onNewAzimut(azimut));
     }
 
     @Override
