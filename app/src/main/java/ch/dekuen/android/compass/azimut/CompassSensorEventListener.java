@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class CompassSensorEventListener implements SensorEventListener {
-    private AzimutService azimutService = new AzimutService();
+    private CalculateAzimutService calculateAzimutService = new CalculateAzimutService();
     private final Consumer<Float> azimutConsumer;
 
     private float[] accelerationMeasurements;
@@ -46,7 +46,7 @@ public class CompassSensorEventListener implements SensorEventListener {
             Log.i(getClass().getName(), "magneticMeasurements is null");
             return;
         }
-        Optional<Float> optional = azimutService.getAzimut(accelerationMeasurements, magneticMeasurements);
+        Optional<Float> optional = calculateAzimutService.calculateAzimut(accelerationMeasurements, magneticMeasurements);
         if (optional.isPresent()) {
             Float azimut = optional.get();
             azimutConsumer.accept(azimut);
@@ -58,7 +58,7 @@ public class CompassSensorEventListener implements SensorEventListener {
         // not in use
     }
 
-    void setAzimutService(AzimutService azimutService) {
-        this.azimutService = azimutService;
+    void setAzimutService(CalculateAzimutService calculateAzimutService) {
+        this.calculateAzimutService = calculateAzimutService;
     }
 }

@@ -28,20 +28,20 @@ import java.util.function.Consumer;
 public class CompassSensorEventListenerTest {
     private CompassSensorEventListener testee;
     private final List<Float> consumedFloats = new ArrayList<>();
-    private AzimutService azimutService;
+    private CalculateAzimutService calculateAzimutService;
     private final Consumer<Float> floatConsumer = consumedFloats::add;
 
     @Before
     public void before() {
-        azimutService = mock(AzimutService.class);
+        calculateAzimutService = mock(CalculateAzimutService.class);
         consumedFloats.clear();
         testee = new CompassSensorEventListener(floatConsumer);
-        testee.setAzimutService(azimutService);
+        testee.setAzimutService(calculateAzimutService);
     }
 
     @After
     public void after() {
-        verifyNoMoreInteractions(azimutService);
+        verifyNoMoreInteractions(calculateAzimutService);
         assertTrue(consumedFloats.isEmpty());
     }
 
@@ -119,7 +119,7 @@ public class CompassSensorEventListenerTest {
         // assert
         verifySensorEvent(accelerometerEvent);
         verifySensorEvent(magnetometerEvent);
-        verify(azimutService).getAzimut(acceleration, magneticField);
+        verify(calculateAzimutService).calculateAzimut(acceleration, magneticField);
     }
 
     @Test
@@ -132,14 +132,14 @@ public class CompassSensorEventListenerTest {
         SensorEvent accelerometerEvent = mockEvent(accelerometer, Sensor.TYPE_ACCELEROMETER, acceleration);
         SensorEvent magnetometerEvent = mockEvent(magnetometer, Sensor.TYPE_MAGNETIC_FIELD, magneticField);
         float azimut = -98.76f;
-        when(azimutService.getAzimut(acceleration, magneticField)).thenReturn(Optional.of(azimut));
+        when(calculateAzimutService.calculateAzimut(acceleration, magneticField)).thenReturn(Optional.of(azimut));
         // act
         testee.onSensorChanged(accelerometerEvent);
         testee.onSensorChanged(magnetometerEvent);
         // assert
         verifySensorEvent(accelerometerEvent);
         verifySensorEvent(magnetometerEvent);
-        verify(azimutService).getAzimut(acceleration, magneticField);
+        verify(calculateAzimutService).calculateAzimut(acceleration, magneticField);
         assertEquals(Collections.singletonList(azimut), consumedFloats);
         consumedFloats.clear();
     }

@@ -12,13 +12,13 @@ import org.robolectric.RobolectricTestRunner;
 import java.util.Optional;
 
 @RunWith(RobolectricTestRunner.class)
-public class AzimutServiceTest {
+public class CalculateAzimutServiceTest {
     private static final float G = 9.81f;
-    private AzimutService testee;
+    private CalculateAzimutService testee;
 
     @Before
     public void before() {
-        testee = new AzimutService();
+        testee = new CalculateAzimutService();
     }
 
     @Test
@@ -27,7 +27,7 @@ public class AzimutServiceTest {
         float[] acceleration = new float[1];
         float[] magneticField = new float[2];
         // act
-        Optional<Float> actual = testee.getAzimut(acceleration, magneticField);
+        Optional<Float> actual = testee.calculateAzimut(acceleration, magneticField);
         // assert
         assertFalse(actual.isPresent());
     }
@@ -38,7 +38,7 @@ public class AzimutServiceTest {
         float[] acceleration = {0.01f, G, G};
         float[] magneticField = {1f, 1f, 1f};
         // act
-        Optional<Float> actual = testee.getAzimut(acceleration, magneticField);
+        Optional<Float> actual = testee.calculateAzimut(acceleration, magneticField);
         // assert
         assertTrue(actual.isPresent());
         Float actualAzimut = actual.get();

@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 
 import java.util.Optional;
 
-class AzimutService {
-    Optional<Float> getAzimut(@NonNull float[] accelerationMeasurements, @NonNull float[] magneticMeasurements) {
+class CalculateAzimutService {
+    Optional<Float> calculateAzimut(@NonNull float[] accelerationMeasurements, @NonNull float[] magneticMeasurements) {
         try {
             float[] matrixR = new float[9];
             boolean success = SensorManager.getRotationMatrix(matrixR, null, accelerationMeasurements, magneticMeasurements);
