@@ -1,4 +1,4 @@
-package ch.dekuen.android.compass.azimut;
+package ch.dekuen.android.compass;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,7 +10,6 @@ import java.util.function.Consumer;
 
 public class CompassSensorEventListener implements SensorEventListener {
     private final Consumer<Float> azimutConsumer;
-
     private float[] accelerationMeasurements;
     private float[] magneticMeasurements;
 

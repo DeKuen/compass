@@ -1,4 +1,4 @@
-package ch.dekuen.android.compass.azimut;
+package ch.dekuen.android.compass;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;

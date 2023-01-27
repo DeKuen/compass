@@ -1,4 +1,4 @@
-package ch.dekuen.android.compass.service;
+package ch.dekuen.android.compass;
 
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
