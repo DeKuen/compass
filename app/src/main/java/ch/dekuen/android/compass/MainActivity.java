@@ -30,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
         // TextView that will display the azimut in degrees
         TextView azimutTextView = findViewById(R.id.azimutTextView);
         CompassViewService compassViewService = new CompassViewService(compassImageView, azimutTextView);
-        compassSensorEventListener = new CompassSensorEventListener(compassViewService::updateCompass);
+        compassSensorEventListener = new CompassSensorEventListener();
+        compassSensorEventListener.addConsumer(compassViewService::updateCompass);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
 
