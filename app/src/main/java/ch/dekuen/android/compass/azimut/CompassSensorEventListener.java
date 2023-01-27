@@ -3,13 +3,12 @@ package ch.dekuen.android.compass.azimut;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.util.Log;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class CompassSensorEventListener implements SensorEventListener {
-    private CalculateAzimutService calculateAzimutService = new CalculateAzimutService();
     private final Consumer<Float> azimutConsumer;
 
     private float[] accelerationMeasurements;
@@ -46,19 +45,22 @@ public class CompassSensorEventListener implements SensorEventListener {
             Log.i(getClass().getName(), "magneticMeasurements is null");
             return;
         }
-        Optional<Float> optional = calculateAzimutService.calculateAzimut(accelerationMeasurements, magneticMeasurements);
-        if (optional.isPresent()) {
-            Float azimut = optional.get();
-            azimutConsumer.accept(azimut);
+        float[] matrixR = new float[9];
+        boolean success = SensorManager.getRotationMatrix(matrixR, null, accelerationMeasurements, magneticMeasurements);
+        if (!success) {
+            Log.i(getClass().getName(), "could not calculate rotation matrix");
+            return;
         }
+        float[] orientation = new float[3];
+        // orientation contains: azimut, pitch and roll
+        SensorManager.getOrientation(matrixR, orientation);
+        // get angle around the z-axis rotated
+        float azimut = orientation[0];
+        azimutConsumer.accept(azimut);
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not in use
-    }
-
-    void setAzimutService(CalculateAzimutService calculateAzimutService) {
-        this.calculateAzimutService = calculateAzimutService;
     }
 }
