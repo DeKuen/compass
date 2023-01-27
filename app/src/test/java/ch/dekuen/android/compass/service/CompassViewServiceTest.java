@@ -1,11 +1,10 @@
 package ch.dekuen.android.compass.service;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static ch.dekuen.android.compass.service.CompassViewService.DEGREE_POSTFIX;
+import static ch.dekuen.android.compass.service.CompassViewService.DECIMAL_FORMAT;
 
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -37,37 +36,15 @@ public class CompassViewServiceTest {
     }
 
     @Test
-    public void updateCompass_SameValueAsInitial_DoNothing() {
-        // setup
-        float azimutExact = 0f;
-        // act & assert
-        assertDoesNotThrow(() -> testee.updateCompass(azimutExact));
-    }
-
-    @Test
-    public void updateCompass_RoundedDownSameValue_DoNothing() {
-        // setup
-        float azimutExact = 0.1f;
-        // act & assert
-        assertDoesNotThrow(() -> testee.updateCompass(azimutExact));
-    }
-
-    @Test
-    public void updateCompass_RoundedUpSameValue_DoNothing() {
-        // setup
-        float azimutExact = -0.1f;
-        // act & assert
-        assertDoesNotThrow(() -> testee.updateCompass(azimutExact));
-    }
-
-    @Test
     public void updateCompass_NewValue_UpdateTextAndRotateImage() {
         // setup
         float azimutExact = 1f;
+        double azimutDegrees = Math.toDegrees(azimutExact);
+        String text = DECIMAL_FORMAT.format(azimutDegrees);
         // act
         testee.updateCompass(azimutExact);
         // assert
-        verify(azimutTextView).setText("1" + DEGREE_POSTFIX);
+        verify(azimutTextView).setText(text);
         verify(compassImageView).startAnimation(any(RotateAnimation.class));
     }
 }

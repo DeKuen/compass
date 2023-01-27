@@ -5,11 +5,13 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 public class CompassViewService {
-    static final String DEGREE_POSTFIX = " °";
+    static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###.# " + " °");
     private final ImageView compassImageView;
     private final TextView azimutTextView;
-    private int lastDegree = 0;
+    private double lastDegree = 0;
 
     public CompassViewService(ImageView compassImageView, TextView azimutTextView) {
         this.compassImageView = compassImageView;
@@ -18,17 +20,13 @@ public class CompassViewService {
 
     public void updateCompass(float azimutExact)
     {
-        int azimut = Math.round(azimutExact);
-        if(azimut == -lastDegree)
-        {
-            return;
-        }
-        String text = azimut + DEGREE_POSTFIX;
+        double azimutDegrees = Math.toDegrees(azimutExact);
+        String text = DECIMAL_FORMAT.format(azimutDegrees);
         azimutTextView.setText(text);
-        // rotation animation - reverse turn azimut degrees
+        // rotation animation - reverse turn azimutDegrees degrees
         RotateAnimation rotateAnimation = new RotateAnimation(
-                lastDegree,
-                -azimut,
+                (float) lastDegree,
+                (float) -azimutDegrees,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
         // set the compass animation after the end of the reservation status
@@ -37,6 +35,6 @@ public class CompassViewService {
         rotateAnimation.setDuration(210);
         // Start animation of compass image
         compassImageView.startAnimation(rotateAnimation);
-        lastDegree = -azimut;
+        lastDegree = -azimutDegrees;
     }
 }
