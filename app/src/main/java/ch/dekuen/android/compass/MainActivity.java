@@ -1,4 +1,4 @@
-package ch.dekuen.android.compassapp;
+package ch.dekuen.android.compass;
 
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -8,9 +8,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import ch.dekuen.android.compassapp.listener.CompassEventListener;
-import ch.dekuen.android.compassapp.service.AzimutService;
-import ch.dekuen.android.compassapp.service.CompassViewService;
+import ch.dekuen.android.compass.listener.CompassEventListener;
+import ch.dekuen.android.compass.service.AzimutService;
+import ch.dekuen.android.compass.service.CompassViewService;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package ch.dekuen.android.compassapp.service;
+package ch.dekuen.android.compass.service;
 
 import android.hardware.SensorManager;
 import android.util.Log;

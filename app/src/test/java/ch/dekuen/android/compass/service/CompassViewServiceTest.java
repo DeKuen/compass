@@ -1,11 +1,11 @@
-package ch.dekuen.android.compassapp.service;
+package ch.dekuen.android.compass.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static ch.dekuen.android.compassapp.service.CompassViewService.DEGREE_POSTFIX;
+import static ch.dekuen.android.compass.service.CompassViewService.DEGREE_POSTFIX;
 
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;

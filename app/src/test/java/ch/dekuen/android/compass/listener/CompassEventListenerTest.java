@@ -1,4 +1,4 @@
-package ch.dekuen.android.compassapp.listener;
+package ch.dekuen.android.compass.listener;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import ch.dekuen.android.compassapp.service.AzimutService;
+import ch.dekuen.android.compass.service.AzimutService;
 
 @RunWith(RobolectricTestRunner.class)
 public class CompassEventListenerTest {

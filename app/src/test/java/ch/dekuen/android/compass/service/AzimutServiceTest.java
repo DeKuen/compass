@@ -1,4 +1,4 @@
-package ch.dekuen.android.compassapp.service;
+package ch.dekuen.android.compass.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

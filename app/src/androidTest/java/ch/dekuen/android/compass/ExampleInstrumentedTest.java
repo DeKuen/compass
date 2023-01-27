@@ -1,4 +1,4 @@
-package ch.dekuen.android.compassapp;
+package ch.dekuen.android.compass;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("ch.dekuen.android.compassapp", appContext.getPackageName());
+        assertEquals("ch.dekuen.android.compass", appContext.getPackageName());
     }
 }

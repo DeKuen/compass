@@ -1,4 +1,4 @@
-package ch.dekuen.android.compassapp.listener;
+package ch.dekuen.android.compass.listener;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -8,7 +8,7 @@ import android.util.Log;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import ch.dekuen.android.compassapp.service.AzimutService;
+import ch.dekuen.android.compass.service.AzimutService;
 
 public class CompassEventListener implements SensorEventListener {
     private final AzimutService azimutService;
