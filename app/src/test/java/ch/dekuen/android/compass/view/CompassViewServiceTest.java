@@ -1,10 +1,10 @@
-package ch.dekuen.android.compass;
+package ch.dekuen.android.compass.view;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static ch.dekuen.android.compass.CompassViewService.DECIMAL_FORMAT;
+import static ch.dekuen.android.compass.view.CompassViewService.DECIMAL_FORMAT;
 
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;

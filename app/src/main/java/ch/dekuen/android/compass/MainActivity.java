@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
+import ch.dekuen.android.compass.view.CompassViewService;
+
 public class MainActivity extends AppCompatActivity {
 
     // SENSOR_DELAY_GAME for fast response, alternatively use SENSOR_DELAY_UI or SENSOR_DELAY_NORMAL

@@ -1,4 +1,4 @@
-package ch.dekuen.android.compass;
+package ch.dekuen.android.compass.sensor;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
