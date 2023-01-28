@@ -55,10 +55,6 @@ public class CompassSensorEventListener implements SensorEventListener {
             Log.i(getClass().getName(), "could not calculate rotation matrix");
             return;
         }
-        // remap to screen orientation (landscape or portrait)
-        SensorManager.remapCoordinateSystem(matrixR,
-                SensorManager.AXIS_X, SensorManager.AXIS_Z,
-                matrixR);
         float[] orientation = new float[3];
         // orientation contains: azimut, pitch and roll
         SensorManager.getOrientation(matrixR, orientation);
