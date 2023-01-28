@@ -1,5 +1,6 @@
 package ch.dekuen.android.compass.view;
 
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ public class CompassImageViewService implements AzimutListener {
 
     @Override
     public void onNewAzimut(float azimut) {
+        Log.d(getClass().getName(), "Thread name and id:" + Thread.currentThread().getName() + " " + Thread.currentThread().getId());
         if(isRotating.compareAndSet(false, true)) {
             double azimutDegrees = Math.toDegrees(azimut);
             // rotation animation - reverse turn azimutDegrees degrees
