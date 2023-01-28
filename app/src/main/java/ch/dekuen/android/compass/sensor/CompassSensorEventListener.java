@@ -66,7 +66,10 @@ public class CompassSensorEventListener implements SensorEventListener {
         float azimutRaw = orientation[0];
         // apply low pass filter
         azimut = LOW_PASS_FILTER_ALPHA * azimut + (1 - LOW_PASS_FILTER_ALPHA) * azimutRaw;
-        listeners.parallelStream().forEach(listener -> listener.onNewAzimut(azimut));
+        listeners.parallelStream().forEach(listener -> {
+            Log.d(getClass().getName(), "Thread name and id:" + Thread.currentThread().getName() + " " + Thread.currentThread().getId());
+            listener.onNewAzimut(azimut);
+        });
     }
 
     @Override
