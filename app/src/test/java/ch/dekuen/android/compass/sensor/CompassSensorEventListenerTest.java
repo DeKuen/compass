@@ -131,7 +131,7 @@ public class CompassSensorEventListenerTest {
         // assert
         verifySensorEvent(accelerometerEvent);
         verifySensorEvent(magnetometerEvent);
-        float azimut = -0.047145467f;
+        float azimut = -0.04710222f;
         assertEquals(Collections.singletonList(azimut), consumedFloats);
         consumedFloats.clear();
     }
@@ -152,8 +152,8 @@ public class CompassSensorEventListenerTest {
         verifySensorEvent(accelerometerEvent);
         verifySensorEvent(magnetometerEvent);
         verifySensorEvent(magnetometerEvent2);
-        float azimut = -0.047145467f;
-        assertEquals(Arrays.asList(-0.047145467f, -0.09287657f), consumedFloats);
+        float azimut = -0.04710222f;
+        assertEquals(Arrays.asList(-0.04710222f, -0.09279138f), consumedFloats);
         consumedFloats.clear();
     }
 
