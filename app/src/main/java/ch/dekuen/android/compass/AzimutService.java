@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
 
@@ -56,5 +57,11 @@ public class AzimutService extends Service {
         // to stop the listener and save battery
         sensorManager.unregisterListener(compassSensorEventListener);
         return result;
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(getClass().getName(), "Thread name and id:" + Thread.currentThread().getName() + " " + Thread.currentThread().getId());
+        Log.d(getClass().getName(), "destroyed");
     }
 }
