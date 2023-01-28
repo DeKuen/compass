@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
-import ch.dekuen.android.compass.sensor.LowPassFilterService;
 import ch.dekuen.android.compass.view.CompassImageViewService;
 import ch.dekuen.android.compass.view.CompassTextViewService;
 
@@ -33,11 +32,9 @@ public class MainActivity extends AppCompatActivity {
         TextView azimutTextView = findViewById(R.id.azimutTextView);
         CompassTextViewService textViewService = new CompassTextViewService(azimutTextView);
         CompassImageViewService imageViewService = new CompassImageViewService(compassImageView);
-        LowPassFilterService filterService = new LowPassFilterService();
         compassSensorEventListener = new CompassSensorEventListener();
-        filterService.addListener(azimut -> runOnUiThread(() -> textViewService.onNewAzimut(azimut)));
-        filterService.addListener(azimut -> runOnUiThread(() -> imageViewService.onNewAzimut(azimut)));
-        compassSensorEventListener.addListener(filterService);
+        compassSensorEventListener.addListener(azimut -> runOnUiThread(() -> textViewService.onNewAzimut(azimut)));
+        compassSensorEventListener.addListener(azimut -> runOnUiThread(() -> imageViewService.onNewAzimut(azimut)));
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
 

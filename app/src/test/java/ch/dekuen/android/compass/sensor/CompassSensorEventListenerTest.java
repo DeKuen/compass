@@ -19,6 +19,7 @@ import org.robolectric.RobolectricTestRunner;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -107,10 +108,8 @@ public class CompassSensorEventListenerTest {
         // setup
         float[] acceleration = new float[3];
         float[] magneticField = new float[3];
-        Sensor accelerometer = mock(Sensor.class);
-        Sensor magnetometer = mock(Sensor.class);
-        SensorEvent accelerometerEvent = mockEvent(accelerometer, Sensor.TYPE_ACCELEROMETER, acceleration);
-        SensorEvent magnetometerEvent = mockEvent(magnetometer, Sensor.TYPE_MAGNETIC_FIELD, magneticField);
+        SensorEvent accelerometerEvent = mockEvent(mock(Sensor.class), Sensor.TYPE_ACCELEROMETER, acceleration);
+        SensorEvent magnetometerEvent = mockEvent(mock(Sensor.class), Sensor.TYPE_MAGNETIC_FIELD, magneticField);
         // act
         testee.onSensorChanged(accelerometerEvent);
         testee.onSensorChanged(magnetometerEvent);
@@ -120,22 +119,41 @@ public class CompassSensorEventListenerTest {
     }
 
     @Test
-    public void onSensorChanged_BothSensorsPresentAndAzimut_consumeAzimut() {
+    public void onSensorChanged_getRotationMatrixSuccess_consumeAzimut() {
         // setup
         float[] acceleration = {0.01f, G, G};
         float[] magneticField = {1f, 1f, 1f};
-        Sensor accelerometer = mock(Sensor.class);
-        Sensor magnetometer = mock(Sensor.class);
-        SensorEvent accelerometerEvent = mockEvent(accelerometer, Sensor.TYPE_ACCELEROMETER, acceleration);
-        SensorEvent magnetometerEvent = mockEvent(magnetometer, Sensor.TYPE_MAGNETIC_FIELD, magneticField);
-        float azimut = -1.5715171f;
+        SensorEvent accelerometerEvent = mockEvent(mock(Sensor.class), Sensor.TYPE_ACCELEROMETER, acceleration);
+        SensorEvent magnetometerEvent = mockEvent(mock(Sensor.class), Sensor.TYPE_MAGNETIC_FIELD, magneticField);
         // act
         testee.onSensorChanged(accelerometerEvent);
         testee.onSensorChanged(magnetometerEvent);
         // assert
         verifySensorEvent(accelerometerEvent);
         verifySensorEvent(magnetometerEvent);
+        float azimut = -0.047145467f;
         assertEquals(Collections.singletonList(azimut), consumedFloats);
+        consumedFloats.clear();
+    }
+
+    @Test
+    public void onSensorChanged_testLowPassFilterWithTwoAzimuts_consumeAzimut() {
+        // setup
+        float[] acceleration = {0.01f, G, G};
+        float[] magneticField = {1f, 1f, 1f};
+        SensorEvent accelerometerEvent = mockEvent(mock(Sensor.class), Sensor.TYPE_ACCELEROMETER, acceleration);
+        SensorEvent magnetometerEvent = mockEvent(mock(Sensor.class), Sensor.TYPE_MAGNETIC_FIELD, magneticField);
+        SensorEvent magnetometerEvent2 = mockEvent(mock(Sensor.class), Sensor.TYPE_MAGNETIC_FIELD, magneticField);
+        // act
+        testee.onSensorChanged(accelerometerEvent);
+        testee.onSensorChanged(magnetometerEvent);
+        testee.onSensorChanged(magnetometerEvent2);
+        // assert
+        verifySensorEvent(accelerometerEvent);
+        verifySensorEvent(magnetometerEvent);
+        verifySensorEvent(magnetometerEvent2);
+        float azimut = -0.047145467f;
+        assertEquals(Arrays.asList(-0.047145467f, -0.09287657f), consumedFloats);
         consumedFloats.clear();
     }
 

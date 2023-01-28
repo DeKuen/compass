@@ -6,11 +6,21 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import ch.dekuen.android.compass.AzimutProducer;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CompassSensorEventListener extends AzimutProducer implements SensorEventListener {
+import ch.dekuen.android.compass.AzimutListener;
+
+public class CompassSensorEventListener implements SensorEventListener {
+    static final float LOW_PASS_FILTER_ALPHA = 0.97f;
+    private final List<AzimutListener> listeners = new ArrayList<>();
     private float[] accelerationMeasurements;
     private float[] magneticMeasurements;
+    private float azimut;
+
+    public final void addListener(AzimutListener listener) {
+        listeners.add(listener);
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -49,8 +59,10 @@ public class CompassSensorEventListener extends AzimutProducer implements Sensor
         // orientation contains: azimut, pitch and roll
         SensorManager.getOrientation(matrixR, orientation);
         // get angle around the z-axis rotated
-        float azimut = orientation[0];
-        callListeners(azimut);
+        float azimutRaw = orientation[0];
+        // apply low pass filter
+        azimut = LOW_PASS_FILTER_ALPHA * azimut + (1 - LOW_PASS_FILTER_ALPHA) * azimutRaw;
+        listeners.forEach(listener -> listener.onNewAzimut(azimut));
     }
 
     @Override
