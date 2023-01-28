@@ -7,14 +7,21 @@ This is my first Android app and I learned a few things.
 ### Junit4
 JUnit5 did not work in the end.
 
-## Angles in radians vs. 360°
+### Angles in radians vs. 360°
 All angles on the sensor side are in radians, while rotating an image with RotateAnimation takes degrees as parameters.
 
-## Low-pass filter
+### Low-pass filter
 A simple low-pass-filter reduces noise in the sensor values.
 ```
 azimut = 0.97f * azimut + (1 - 0.97f) * newAzimut;
 ```
+
+### Public constructor not being public
+android.hardware.SensorEvent shows a public constructor in Android Studio. But using results in a compiler error:
+
+'SensorEvent()' is not public in 'android.hardware.SensorEvent'. Cannot be accessed from outside package
+
+Maybe it has something to do with SensorEvent being written in Kotlin and Android Studio showing decompiled Java code.
 
 ## Links
 Fix Markdown plugin in Android studio:
