@@ -7,7 +7,7 @@ import java.text.DecimalFormat;
 import ch.dekuen.android.compass.AzimutListener;
 
 public class CompassTextViewService implements AzimutListener {
-    static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###.# " + " °");
+    static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###" + "°");
     private final TextView azimutTextView;
 
     public CompassTextViewService(TextView azimutTextView) {
