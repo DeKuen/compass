@@ -1,5 +1,6 @@
 package ch.dekuen.android.compass.view;
 
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -23,12 +24,14 @@ public class CompassImageViewService implements AzimutListener {
                 (float) -azimutDegrees,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
+        // store last value
+        lastDegree = -azimutDegrees;
         // set the compass animation after the end of the reservation status
         rotateAnimation.setFillAfter(true);
         // set how long the animation for the compass image will take place
         rotateAnimation.setDuration(210);
+        rotateAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
         // Start animation of compass image
         compassImageView.startAnimation(rotateAnimation);
-        lastDegree = -azimutDegrees;
     }
 }
