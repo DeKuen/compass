@@ -1,56 +1,68 @@
 package ch.dekuen.android.compass;
 
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
 import ch.dekuen.android.compass.view.CompassImageViewService;
 import ch.dekuen.android.compass.view.CompassTextViewService;
 
-public class MainActivity extends AppCompatActivity {
-
-    // SENSOR_DELAY_GAME for fast response, alternatively use SENSOR_DELAY_UI or SENSOR_DELAY_NORMAL
-    private static final int SAMPLING_PERIOD_US = SensorManager.SENSOR_DELAY_GAME;
-
-    private CompassSensorEventListener compassSensorEventListener;
-
-    // device sensor manager
-    private SensorManager sensorManager;
+public class MainActivity extends Activity {
+    private final CustomServiceConnection connection = new CustomServiceConnection();
+    private AzimutListener azimutTextViewListener;
+    private AzimutListener azimutImageViewListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
         // ImageView for compass image
         ImageView compassImageView = findViewById(R.id.compassImageView);
         // TextView that will display the azimut in degrees
         TextView azimutTextView = findViewById(R.id.azimutTextView);
         CompassTextViewService textViewService = new CompassTextViewService(azimutTextView);
         CompassImageViewService imageViewService = new CompassImageViewService(compassImageView);
-        compassSensorEventListener = new CompassSensorEventListener();
-        compassSensorEventListener.addListener(azimut -> runOnUiThread(() -> textViewService.onNewAzimut(azimut)));
-        compassSensorEventListener.addListener(azimut -> runOnUiThread(() -> imageViewService.onNewAzimut(azimut)));
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // to stop the listener and save battery
-        sensorManager.unregisterListener(compassSensorEventListener);
+        azimutTextViewListener = azimut -> runOnUiThread(() -> textViewService.onNewAzimut(azimut));
+        azimutImageViewListener = azimut -> runOnUiThread(() -> imageViewService.onNewAzimut(azimut));
+        Intent intent = new Intent(this, AzimutService.class);
+        startService(intent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(compassSensorEventListener, accelerometer, SAMPLING_PERIOD_US);
-        sensorManager.registerListener(compassSensorEventListener, magnetometer, SAMPLING_PERIOD_US);
+        // Bind to AzimutService
+        Intent intent = new Intent(this, AzimutService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(connection);
+    }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private class CustomServiceConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to AzimutService, cast the IBinder and get AzimutService instance
+            AzimutService.AzimutServiceBinder binder = (AzimutService.AzimutServiceBinder) service;
+            AzimutService azimutService = binder.getService();
+            azimutService.registerListener(azimutTextViewListener);
+            azimutService.registerListener(azimutImageViewListener);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            // ignored
+        }
     }
 }

@@ -6,20 +6,24 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import ch.dekuen.android.compass.AzimutListener;
 
 public class CompassSensorEventListener implements SensorEventListener {
     static final float LOW_PASS_FILTER_ALPHA = 0.97f;
-    private final List<AzimutListener> listeners = new ArrayList<>();
+    private final Set<AzimutListener> listeners = new HashSet<>();
     private float[] accelerationMeasurements;
     private float[] magneticMeasurements;
     private float azimut;
 
-    public final void addListener(AzimutListener listener) {
+    public void registerListener(AzimutListener listener) {
         listeners.add(listener);
+    }
+
+    public void removeListener(AzimutListener listener) {
+        listeners.remove(listener);
     }
 
     @Override
