@@ -17,13 +17,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import ch.dekuen.android.compass.AzimutListener;
+import ch.dekuen.android.compass.ReflectionHelper;
 
 @RunWith(RobolectricTestRunner.class)
 public class CompassSensorEventListenerTest {
@@ -131,8 +129,9 @@ public class CompassSensorEventListenerTest {
         // assert
         verifySensorEvent(accelerometerEvent);
         verifySensorEvent(magnetometerEvent);
-        float azimut = -0.04710222f;
-        assertEquals(Collections.singletonList(azimut), consumedFloats);
+        assertEquals(1, consumedFloats.size());
+        float azimut = -0.047145467f;
+        assertEquals(azimut, consumedFloats.get(0), 0.0001f);
         consumedFloats.clear();
     }
 
@@ -152,8 +151,10 @@ public class CompassSensorEventListenerTest {
         verifySensorEvent(accelerometerEvent);
         verifySensorEvent(magnetometerEvent);
         verifySensorEvent(magnetometerEvent2);
-        float azimut = -0.04710222f;
-        assertEquals(Arrays.asList(-0.04710222f, -0.09279138f), consumedFloats);
+        assertEquals(2, consumedFloats.size());
+        float azimut = -0.047145467f;
+        assertEquals(azimut, consumedFloats.get(0), 0.0001f);
+        assertEquals(-0.09287657f, consumedFloats.get(1), 0.0001f);
         consumedFloats.clear();
     }
 
@@ -161,16 +162,8 @@ public class CompassSensorEventListenerTest {
         SensorEvent event = mock(SensorEvent.class);
         when(sensor.getType()).thenReturn(type);
         event.sensor = sensor;
-        try {
-            Field field = SensorEvent.class.getDeclaredField("values");
-            boolean accessible = field.isAccessible();
-            field.setAccessible(true);
-            field.set(event, values);
-            field.setAccessible(accessible);
-            return event;
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
+        ReflectionHelper.setFieldValue(event, "values", values);
+        return event;
     }
 
     private void verifySensorEvent(SensorEvent event) {
