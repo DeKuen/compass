@@ -1,15 +1,18 @@
 package ch.dekuen.android.compass.view;
 
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.dekuen.android.compass.AzimutListener;
 
 public class CompassImageViewService implements AzimutListener {
     private final ImageView compassImageView;
+    private final AtomicBoolean isRotating = new AtomicBoolean(false);
     private double lastDegree = 0;
+    private final RotationEndListener rotationEndListener = new RotationEndListener();
 
     public CompassImageViewService(ImageView compassImageView) {
         this.compassImageView = compassImageView;
@@ -17,21 +20,38 @@ public class CompassImageViewService implements AzimutListener {
 
     @Override
     public void onNewAzimut(float azimut) {
-        double azimutDegrees = Math.toDegrees(azimut);
-        // rotation animation - reverse turn azimutDegrees degrees
-        RotateAnimation rotateAnimation = new RotateAnimation(
-                (float) lastDegree,
-                (float) -azimutDegrees,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f);
-        // store last value
-        lastDegree = -azimutDegrees;
-        // set the compass animation after the end of the reservation status
-        rotateAnimation.setFillAfter(true);
-        // set how long the animation for the compass image will take place
-        rotateAnimation.setDuration(210);
-        rotateAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
-        // Start animation of compass image
-        compassImageView.startAnimation(rotateAnimation);
+        if(isRotating.compareAndSet(false, true)) {
+            double azimutDegrees = Math.toDegrees(azimut);
+            // rotation animation - reverse turn azimutDegrees degrees
+            RotateAnimation rotateAnimation = new RotateAnimation(
+                    (float) lastDegree,
+                    (float) -azimutDegrees,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f);
+            // store last value
+            lastDegree = -azimutDegrees;
+            // set the compass animation after the end of the reservation status
+            rotateAnimation.setFillAfter(true);
+            rotateAnimation.setAnimationListener(rotationEndListener);
+            // Start animation of compass image
+            compassImageView.startAnimation(rotateAnimation);
+        }
+    }
+
+    private class RotationEndListener implements Animation.AnimationListener {
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            isRotating.set(false);
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
     }
 }
