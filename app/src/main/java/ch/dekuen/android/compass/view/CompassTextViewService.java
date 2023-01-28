@@ -1,6 +1,5 @@
 package ch.dekuen.android.compass.view;
 
-import android.util.Log;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -17,7 +16,6 @@ public class CompassTextViewService implements AzimutListener {
 
     @Override
     public void onNewAzimut(float azimut) {
-        Log.d(getClass().getName(), "Thread name and id:" + Thread.currentThread().getName() + " " + Thread.currentThread().getId());
         double azimutDegrees = Math.toDegrees(azimut);
         String text = DECIMAL_FORMAT.format(azimutDegrees);
         azimutTextView.setText(text);
