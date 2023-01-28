@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
         CompassImageViewService imageViewService = new CompassImageViewService(compassImageView);
         LowPassFilterService filterService = new LowPassFilterService();
         compassSensorEventListener = new CompassSensorEventListener();
-        filterService.addListener(textViewService);
-        filterService.addListener(imageViewService);
+        filterService.addListener(azimut -> runOnUiThread(() -> textViewService.onNewAzimut(azimut)));
+        filterService.addListener(azimut -> runOnUiThread(() -> imageViewService.onNewAzimut(azimut)));
         compassSensorEventListener.addListener(filterService);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
