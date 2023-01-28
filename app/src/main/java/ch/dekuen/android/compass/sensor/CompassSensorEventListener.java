@@ -43,10 +43,10 @@ public class CompassSensorEventListener implements SensorEventListener {
             return;
         }
         if (accelerationMeasurements == null) {
-            Log.i(getClass().getName(), "accelerationMeasurements is null");
+            Log.i(getClass().getName(), "accelerationMeasurements is still null");
             return;
         } else if (magneticMeasurements == null) {
-            Log.i(getClass().getName(), "magneticMeasurements is null");
+            Log.i(getClass().getName(), "magneticMeasurements is still null");
             return;
         }
         float[] matrixR = new float[9];
