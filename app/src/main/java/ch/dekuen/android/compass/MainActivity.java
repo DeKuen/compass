@@ -1,18 +1,17 @@
 package ch.dekuen.android.compass;
 
+import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
 import ch.dekuen.android.compass.view.CompassImageViewService;
 import ch.dekuen.android.compass.view.CompassTextViewService;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     // SENSOR_DELAY_GAME for fast response, alternatively use SENSOR_DELAY_UI or SENSOR_DELAY_NORMAL
     private static final int SAMPLING_PERIOD_US = SensorManager.SENSOR_DELAY_GAME;
