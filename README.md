@@ -23,13 +23,20 @@ android.hardware.SensorEvent shows a public constructor in Android Studio. But u
 
 Maybe it has something to do with SensorEvent being written in Kotlin and Android Studio showing decompiled Java code.
 
+### Math.atan2(y, x) takes y as first parameter
+
+Lost way to much time with this.
+
 ## Links
+Sensor Coordinate System
+
+https://developer.android.com/guide/topics/sensors/sensors_overview#sensors-coords
+
 Fix Markdown plugin in Android studio:
 
 https://joachimschuster.de/posts/android-studio-fix-markdown-plugin/
 
 Low-pass filter:
 
+https://developer.android.com/guide/topics/sensors/sensors_motion#sensors-motion-accel
 https://github.com/iutinvg/compass/commit/1bd90d7cd0c292b5911cb775400670aef1a86c51#diff-4c11faf4ab931e7176732c7e08fe8a15cc8dc09b85ad5d5fce8f1ff52bba1dfa
-
-
