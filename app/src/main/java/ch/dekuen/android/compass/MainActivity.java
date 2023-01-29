@@ -12,7 +12,8 @@ import androidx.annotation.NonNull;
 
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
 import ch.dekuen.android.compass.sensor.CoordinatesLowPassFilter;
-import ch.dekuen.android.compass.sensor.DisplayAzimutCalculator;
+import ch.dekuen.android.compass.sensor.OrientationCalculator;
+import ch.dekuen.android.compass.sensor.RotationMatrixCalculator;
 import ch.dekuen.android.compass.view.CompassImageViewService;
 import ch.dekuen.android.compass.view.CompassTextViewService;
 
@@ -32,9 +33,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         AzimutListener azimutListener = getAzimutListener();
         Display display = getWindowManager().getDefaultDisplay();
-        DisplayAzimutCalculator displayAzimutCalculator = new DisplayAzimutCalculator(azimutListener, display);
-        CoordinatesLowPassFilter accelerationLPF = new CoordinatesLowPassFilter(displayAzimutCalculator::onAccelerationSensorChanged);
-        CoordinatesLowPassFilter magneticLPF = new CoordinatesLowPassFilter(displayAzimutCalculator::onMagneticSensorChanged);
+        OrientationCalculator orientationCalculator = new OrientationCalculator(azimutListener, display);
+        RotationMatrixCalculator rotationMatrixCalculator = new RotationMatrixCalculator(orientationCalculator::calculate);
+        CoordinatesLowPassFilter accelerationLPF = new CoordinatesLowPassFilter(rotationMatrixCalculator::onAccelerationSensorChanged);
+        CoordinatesLowPassFilter magneticLPF = new CoordinatesLowPassFilter(rotationMatrixCalculator::onMagneticSensorChanged);
         compassSensorEventListener = new CompassSensorEventListener(
                 accelerationLPF::onSensorChanged,
                 magneticLPF::onSensorChanged);
