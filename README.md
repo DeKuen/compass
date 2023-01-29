@@ -30,6 +30,7 @@ https://joachimschuster.de/posts/android-studio-fix-markdown-plugin/
 
 Low-pass filter:
 
+https://developer.android.com/guide/topics/sensors/sensors_motion#sensors-motion-accel
 https://github.com/iutinvg/compass/commit/1bd90d7cd0c292b5911cb775400670aef1a86c51#diff-4c11faf4ab931e7176732c7e08fe8a15cc8dc09b85ad5d5fce8f1ff52bba1dfa
 
 
