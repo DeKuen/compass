@@ -49,6 +49,7 @@ public class DisplayAzimutCalculator {
         SensorManager.getOrientation(matrixR, orientation);
         // get angle around the z-axis rotated
         float azimut = orientation[0];
+        azimut = (float) ((azimut + getDisplayRotation() + 2 * Math.PI) % (2 * Math.PI));
         // send to listener
         listener.onNewAzimut(azimut);
     }
