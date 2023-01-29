@@ -56,6 +56,12 @@ public class CompassSensorEventListener implements SensorEventListener {
             Log.i(getClass().getName(), "could not calculate rotation matrix");
             return;
         }
+        if(isPhoneUpright()) {
+            SensorManager.remapCoordinateSystem(
+                    matrixR,
+                    SensorManager.AXIS_X, SensorManager.AXIS_Z,
+                    matrixR);
+        }
         float[] orientation = new float[3];
         // orientation contains: azimut, pitch and roll
         SensorManager.getOrientation(matrixR, orientation);
@@ -63,11 +69,24 @@ public class CompassSensorEventListener implements SensorEventListener {
         float azimutRaw = orientation[0];
         // apply low pass filter
         azimut = LOW_PASS_FILTER_ALPHA * azimut + (1 - LOW_PASS_FILTER_ALPHA) * azimutRaw;
+        Log.d(getClass().getName(), "azimut is: " + azimut);
+        Log.d(getClass().getName(), "accelerationMeasurements are: ["
+                + accelerationMeasurements[0] + ", "
+                + accelerationMeasurements[1] + ", "
+                + accelerationMeasurements[2] + "]");
         listeners.parallelStream().forEach(listener -> listener.onNewAzimut(azimut, isPhoneFacingUp));
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not in use
+    }
+
+    private boolean isPhoneUpright() {
+        float yValue = accelerationMeasurements[1];
+        float g = 9.81f;
+        // float tolerance = 0.1f;
+        float tolerance = 0.5f;
+        return Math.abs(g - yValue) < g * tolerance;
     }
 }
