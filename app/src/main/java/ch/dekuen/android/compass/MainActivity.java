@@ -10,9 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import ch.dekuen.android.compass.sensor.AzimutCalculator;
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
 import ch.dekuen.android.compass.sensor.CoordinatesLowPassFilter;
+import ch.dekuen.android.compass.sensor.DisplayAzimutCalculator;
 import ch.dekuen.android.compass.view.CompassImageViewService;
 import ch.dekuen.android.compass.view.CompassTextViewService;
 
@@ -31,9 +31,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         AzimutListener azimutListener = getAzimutListener();
-        AzimutCalculator azimutCalculator = new AzimutCalculator(azimutListener);
-        CoordinatesLowPassFilter accelerationLPF = new CoordinatesLowPassFilter(azimutCalculator::onAccelerationSensorChanged);
-        CoordinatesLowPassFilter magneticLPF = new CoordinatesLowPassFilter(azimutCalculator::onMagneticSensorChanged);
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayAzimutCalculator displayAzimutCalculator = new DisplayAzimutCalculator(azimutListener, display);
+        CoordinatesLowPassFilter accelerationLPF = new CoordinatesLowPassFilter(displayAzimutCalculator::onAccelerationSensorChanged);
+        CoordinatesLowPassFilter magneticLPF = new CoordinatesLowPassFilter(displayAzimutCalculator::onMagneticSensorChanged);
         compassSensorEventListener = new CompassSensorEventListener(
                 accelerationLPF::onSensorChanged,
                 magneticLPF::onSensorChanged);
@@ -46,12 +47,11 @@ public class MainActivity extends Activity {
         ImageView compassImageView = findViewById(R.id.compassImageView);
         // TextView that will display the azimut in degrees
         TextView azimutTextView = findViewById(R.id.azimutTextView);
-        Display display = getWindowManager().getDefaultDisplay();
-        CompassTextViewService textViewService = new CompassTextViewService(display, azimutTextView);
-        CompassImageViewService imageViewService = new CompassImageViewService(display, compassImageView);
-        return (azimut, isPhoneFacingUp) -> runOnUiThread(() -> {
-            textViewService.onNewAzimut(azimut, isPhoneFacingUp);
-            imageViewService.onNewAzimut(azimut, isPhoneFacingUp);
+        CompassTextViewService textViewService = new CompassTextViewService(azimutTextView);
+        CompassImageViewService imageViewService = new CompassImageViewService(compassImageView);
+        return azimut -> runOnUiThread(() -> {
+            textViewService.onNewAzimut(azimut);
+            imageViewService.onNewAzimut(azimut);
         });
     }
 
