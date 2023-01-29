@@ -6,20 +6,17 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.dekuen.android.compass.AzimutListener;
 
 public class CompassSensorEventListener implements SensorEventListener {
     static final float LOW_PASS_FILTER_ALPHA = 0.97f;
-    private final List<AzimutListener> listeners = new ArrayList<>();
+    private final AzimutListener listener;
     private float[] accelerationMeasurements;
     private float[] magneticMeasurements;
     private float azimut;
 
-    public final void addListener(AzimutListener listener) {
-        listeners.add(listener);
+    public CompassSensorEventListener(AzimutListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -63,7 +60,8 @@ public class CompassSensorEventListener implements SensorEventListener {
         float azimutRaw = orientation[0];
         // apply low pass filter
         azimut = LOW_PASS_FILTER_ALPHA * azimut + (1 - LOW_PASS_FILTER_ALPHA) * azimutRaw;
-        listeners.parallelStream().forEach(listener -> listener.onNewAzimut(azimut, isPhoneFacingUp));
+        // send to listener
+        listener.onNewAzimut(azimut, isPhoneFacingUp);
     }
 
     @Override
