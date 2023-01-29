@@ -53,23 +53,17 @@ public class DisplayAzimutCalculator {
         listener.onNewAzimut(azimut);
     }
 
-    protected final double getDisplayRotation() {
-        int degrees;
+    protected double getDisplayRotation() {
         switch (display.getRotation()) {
             case Surface.ROTATION_90:
-                degrees = 90;
-                break;
+                return Math.PI / 2;
             case Surface.ROTATION_180:
-                degrees = 180;
-                break;
+                return Math.PI;
             case Surface.ROTATION_270:
-                degrees = 270;
-                break;
+                return Math.PI * 1.5;
             case Surface.ROTATION_0:
             default:
-                degrees = 0;
-                break;
+                return 0;
         }
-        return Math.toRadians(degrees);
     }
 }
