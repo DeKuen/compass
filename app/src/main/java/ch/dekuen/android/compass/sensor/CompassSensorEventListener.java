@@ -49,6 +49,7 @@ public class CompassSensorEventListener implements SensorEventListener {
             Log.i(getClass().getName(), "magneticMeasurements is still null");
             return;
         }
+        boolean isPhoneFacingUp = accelerationMeasurements[2] >= 0;
         float[] matrixR = new float[9];
         boolean success = SensorManager.getRotationMatrix(matrixR, null, accelerationMeasurements, magneticMeasurements);
         if (!success) {
@@ -62,7 +63,7 @@ public class CompassSensorEventListener implements SensorEventListener {
         float azimutRaw = orientation[0];
         // apply low pass filter
         azimut = LOW_PASS_FILTER_ALPHA * azimut + (1 - LOW_PASS_FILTER_ALPHA) * azimutRaw;
-        listeners.parallelStream().forEach(listener -> listener.onNewAzimut(azimut));
+        listeners.parallelStream().forEach(listener -> listener.onNewAzimut(azimut, isPhoneFacingUp));
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ch.dekuen.android.compass.AzimutListener;
@@ -28,11 +29,16 @@ public class CompassSensorEventListenerTest {
     private static final float G = 9.81f;
     private CompassSensorEventListener testee;
     private final List<Float> consumedFloats = new ArrayList<>();
-    private final AzimutListener listener = consumedFloats::add;
+    private final List<Boolean> consumedBooleans = new ArrayList<>();
+    private final AzimutListener listener = (value, isPhoneFacingUp) -> {
+        consumedFloats.add(value);
+        consumedBooleans.add(isPhoneFacingUp);
+    };
 
     @Before
     public void before() {
         consumedFloats.clear();
+        consumedBooleans.clear();
         testee = new CompassSensorEventListener();
         testee.addListener(listener);
     }
@@ -40,6 +46,7 @@ public class CompassSensorEventListenerTest {
     @After
     public void after() {
         assertTrue(consumedFloats.isEmpty());
+        assertTrue(consumedBooleans.isEmpty());
     }
 
     @Test
@@ -133,6 +140,8 @@ public class CompassSensorEventListenerTest {
         float azimut = -0.047145467f;
         assertEquals(azimut, consumedFloats.get(0), 0.0001f);
         consumedFloats.clear();
+        assertEquals(Arrays.asList(true), consumedBooleans);
+        consumedBooleans.clear();
     }
 
     @Test
@@ -156,6 +165,8 @@ public class CompassSensorEventListenerTest {
         assertEquals(azimut, consumedFloats.get(0), 0.0001f);
         assertEquals(-0.09287657f, consumedFloats.get(1), 0.0001f);
         consumedFloats.clear();
+        assertEquals(Arrays.asList(true, true), consumedBooleans);
+        consumedBooleans.clear();
     }
 
     private static SensorEvent mockEvent(Sensor sensor, int type, float[] values) {

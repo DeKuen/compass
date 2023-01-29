@@ -18,6 +18,7 @@ import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class CompassTextViewServiceTest {
+    public static final float AZIMUT_EXACT = 0f;
     private CompassTextViewService testee;
     private TextView azimutTextView;
     private Display display;
@@ -35,35 +36,85 @@ public class CompassTextViewServiceTest {
     }
 
     @Test
-    public void onNewAzimut_Rotation0_UpdateTextAndRotateImage() {
-        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_0, 0);
+    public void onNewAzimut_Rotation0_UpdateText() {
+        int rotation = Surface.ROTATION_0;
+        int rotationDegrees = 0;
+        boolean isPhoneFacingUp = true;
+        double expectedDegrees = (Math.toDegrees(AZIMUT_EXACT) + rotationDegrees + 360) % 360;
+        onNewAzimut_WithRotation_UpdateText(rotation, isPhoneFacingUp, expectedDegrees);
     }
 
     @Test
-    public void onNewAzimut_Rotation90_UpdateTextAndRotateImage() {
-        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_90, -90);
+    public void onNewAzimut_Rotation0UpsideDown_UpdateText() {
+        int rotation = Surface.ROTATION_0;
+        int rotationDegrees = 0;
+        boolean isPhoneFacingUp = false;
+        double expectedDegrees = (Math.toDegrees(AZIMUT_EXACT) + rotationDegrees + 180 + 360) % 360;
+        onNewAzimut_WithRotation_UpdateText(rotation, isPhoneFacingUp, expectedDegrees);
     }
 
     @Test
-    public void onNewAzimut_Rotation180_UpdateTextAndRotateImage() {
-        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_180, 180);
+    public void onNewAzimut_Rotation90_UpdateText() {
+        int rotation = Surface.ROTATION_90;
+        int rotationDegrees = 90;
+        boolean isPhoneFacingUp = true;
+        double expectedDegrees = (Math.toDegrees(AZIMUT_EXACT) + rotationDegrees + 360) % 360;
+        onNewAzimut_WithRotation_UpdateText(rotation, isPhoneFacingUp, expectedDegrees);
     }
 
     @Test
-    public void onNewAzimut_Rotation270_UpdateTextAndRotateImage() {
-        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_270, 90);
+    public void onNewAzimut_Rotation90UpsideDown_UpdateText() {
+        int rotation = Surface.ROTATION_90;
+        int rotationDegrees = 90;
+        boolean isPhoneFacingUp = false;
+        double expectedDegrees = (Math.toDegrees(AZIMUT_EXACT) + rotationDegrees + 360) % 360;
+        onNewAzimut_WithRotation_UpdateText(rotation, isPhoneFacingUp, expectedDegrees);
     }
 
-    private void onNewAzimut_WithRotation_UpdateTextAndRotateImage(int rotation, int rotationDegrees) {
+    @Test
+    public void onNewAzimut_Rotation180_UpdateText() {
+        int rotation = Surface.ROTATION_180;
+        int rotationDegrees = 180;
+        boolean isPhoneFacingUp = true;
+        double expectedDegrees = (Math.toDegrees(AZIMUT_EXACT) + rotationDegrees + 360) % 360;
+        onNewAzimut_WithRotation_UpdateText(rotation, isPhoneFacingUp, expectedDegrees);
+    }
+
+    @Test
+    public void onNewAzimut_Rotation180UpsideDown_UpdateText() {
+        int rotation = Surface.ROTATION_180;
+        int rotationDegrees = 180;
+        boolean isPhoneFacingUp = false;
+        double expectedDegrees = (Math.toDegrees(AZIMUT_EXACT) + rotationDegrees + 180 + 360) % 360;
+        onNewAzimut_WithRotation_UpdateText(rotation, isPhoneFacingUp, expectedDegrees);
+    }
+
+    @Test
+    public void onNewAzimut_Rotation270_UpdateText() {
+        int rotation = Surface.ROTATION_270;
+        int rotationDegrees = 270;
+        boolean isPhoneFacingUp = true;
+        double expectedDegrees = (Math.toDegrees(AZIMUT_EXACT) + rotationDegrees + 360) % 360;
+        onNewAzimut_WithRotation_UpdateText(rotation, isPhoneFacingUp, expectedDegrees);
+    }
+
+    @Test
+    public void onNewAzimut_Rotation270UpsideDown_UpdateText() {
+        int rotation = Surface.ROTATION_270;
+        int rotationDegrees = 270;
+        boolean isPhoneFacingUp = false;
+        double expectedDegrees = (Math.toDegrees(AZIMUT_EXACT) + rotationDegrees + 360) % 360;
+        onNewAzimut_WithRotation_UpdateText(rotation, isPhoneFacingUp, expectedDegrees);
+    }
+
+    private void onNewAzimut_WithRotation_UpdateText(int rotation, boolean isPhoneFacingUp, double expectedDegrees) {
         // setup
-        float azimutExact = 1f;
         when(display.getRotation()).thenReturn(rotation);
         // act
-        testee.onNewAzimut(azimutExact);
+        testee.onNewAzimut(AZIMUT_EXACT, isPhoneFacingUp);
         // assert
         verify(display).getRotation();
-        double azimutDegrees = Math.toDegrees(azimutExact) - rotationDegrees;
-        String text = DECIMAL_FORMAT.format(azimutDegrees);
+        String text = DECIMAL_FORMAT.format(expectedDegrees);
         verify(azimutTextView).setText(text);
     }
 }

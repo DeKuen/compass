@@ -19,9 +19,9 @@ public class CompassImageViewService extends CompassViewService {
     }
 
     @Override
-    public void onNewAzimut(float azimut) {
+    public void onNewAzimut(float azimut, boolean isPhoneFacingUp) {
         if(isRotating.compareAndSet(false, true)) {
-            double azimutDegrees = Math.toDegrees(azimut) - getRotation();
+            double azimutDegrees = getViewDegrees(azimut, isPhoneFacingUp);
             // rotation animation - reverse turn azimutDegrees degrees
             RotateAnimation rotateAnimation = new RotateAnimation(
                     (float) lastDegree,

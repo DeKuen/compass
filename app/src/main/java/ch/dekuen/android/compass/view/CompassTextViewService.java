@@ -15,8 +15,8 @@ public class CompassTextViewService extends CompassViewService {
     }
 
     @Override
-    public void onNewAzimut(float azimut) {
-        double azimutDegrees = Math.toDegrees(azimut) - getRotation();
+    public void onNewAzimut(float azimut, boolean isPhoneFacingUp) {
+        double azimutDegrees = getViewDegrees(azimut, isPhoneFacingUp);
         String text = DECIMAL_FORMAT.format(azimutDegrees);
         azimutTextView.setText(text);
     }

@@ -12,17 +12,28 @@ abstract class CompassViewService implements AzimutListener {
         this.display = display;
     }
 
-    protected final int getRotation() {
+    protected final double getViewDegrees(float azimut, boolean isPhoneFacingUp) {
+        double azimutDegrees = Math.toDegrees(azimut);
+        int upDownCorrection = 0;
+        if(!isPhoneFacingUp) {
+            upDownCorrection = 180;
+        }
+        int correction;
         switch (display.getRotation()) {
             case Surface.ROTATION_90:
-                return -90;
+                correction = 90;
+                break;
             case Surface.ROTATION_180:
-                return 180;
+                correction = 180 + upDownCorrection;
+                break;
             case Surface.ROTATION_270:
-                return 90;
+                correction = 270;
+                break;
             case Surface.ROTATION_0:
             default:
-                return 0;
+                correction = upDownCorrection;
+                break;
         }
+        return (azimutDegrees + correction + 360) % 360;
     }
 }

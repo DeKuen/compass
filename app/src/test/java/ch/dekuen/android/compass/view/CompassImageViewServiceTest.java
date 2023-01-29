@@ -53,7 +53,7 @@ public class CompassImageViewServiceTest {
 
     @Test
     public void onNewAzimut_Rotation90_UpdateTextAndRotateImage() {
-        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_90, -90);
+        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_90, 90);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class CompassImageViewServiceTest {
 
     @Test
     public void onNewAzimut_Rotation270_UpdateTextAndRotateImage() {
-        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_270, 90);
+        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_270, 270);
     }
 
     @Test
@@ -74,13 +74,13 @@ public class CompassImageViewServiceTest {
         float azimutExact = 1f;
         when(display.getRotation()).thenReturn(rotation);
         // act
-        testee.onNewAzimut(azimutExact);
-        testee.onNewAzimut(azimutExact);
+        testee.onNewAzimut(azimutExact, true);
+        testee.onNewAzimut(azimutExact, true);
         // assert
         verify(display).getRotation();
         verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
         RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
-        float azimutDegrees = (float) (Math.toDegrees(azimutExact) - rotationDegrees);
+        float azimutDegrees = (float) ((Math.toDegrees(azimutExact) + rotationDegrees + 360) % 360);
         validateRotationAnimation(rotateAnimation, 0f, -azimutDegrees);
     }
 
@@ -92,15 +92,15 @@ public class CompassImageViewServiceTest {
         float azimutExact = 1f;
         when(display.getRotation()).thenReturn(rotation);
         // act
-        testee.onNewAzimut(azimutExact);
+        testee.onNewAzimut(azimutExact, true);
         ReflectionHelper.setFieldValue(testee, "isRotating", new AtomicBoolean(false));
-        testee.onNewAzimut(azimutExact);
+        testee.onNewAzimut(azimutExact, true);
         // assert
         verify(display, times(2)).getRotation();
         verify(compassImageView, times(2)).startAnimation(rotateAnimationCaptor.capture());
         List<RotateAnimation> rotateAnimations = rotateAnimationCaptor.getAllValues();
         assertEquals(2, rotateAnimations.size());
-        float azimutDegrees = (float) (Math.toDegrees(azimutExact) - rotationDegrees);
+        float azimutDegrees = (float) ((Math.toDegrees(azimutExact) + rotationDegrees + 360) % 360);
         RotateAnimation rotateAnimation = rotateAnimations.get(0);
         validateRotationAnimation(rotateAnimation, 0f, -azimutDegrees);
         rotateAnimation = rotateAnimations.get(1);
@@ -112,12 +112,12 @@ public class CompassImageViewServiceTest {
         float azimutExact = 1f;
         when(display.getRotation()).thenReturn(rotation);
         // act
-        testee.onNewAzimut(azimutExact);
+        testee.onNewAzimut(azimutExact, true);
         // assert
         verify(display).getRotation();
         verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
         RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
-        double azimutDegrees = Math.toDegrees(azimutExact) - rotationDegrees;
+        double azimutDegrees = (Math.toDegrees(azimutExact) + rotationDegrees + 360) % 360;
         validateRotationAnimation(rotateAnimation, 0f, (float) -azimutDegrees);
     }
 
