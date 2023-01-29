@@ -1,13 +1,13 @@
 package ch.dekuen.android.compass.sensor;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import android.view.Display;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,26 +21,27 @@ import java.util.function.Consumer;
 import ch.dekuen.android.compass.AzimutListener;
 
 @RunWith(RobolectricTestRunner.class)
-public class AzimutCalculatorTest {
+public class DisplayAzimutCalculatorTest {
     private static final float G = 9.81f;
     private static final float[] ACCELERATION = {0.01f, G, G};
     private static final float[] MAGNETIC_FIELD = {1f, 1f, 1f};
-    private AzimutCalculator testee;
+    private DisplayAzimutCalculator testee;
     private AzimutListener listener;
+    private Display display;
     private ArgumentCaptor<Float> floatCaptor;
-    private ArgumentCaptor<Boolean> booleanCaptor;
 
     @Before
     public void before() {
         listener = mock(AzimutListener.class);
+        display = mock(Display.class);
         floatCaptor = ArgumentCaptor.forClass(Float.class);
-        booleanCaptor = ArgumentCaptor.forClass(Boolean.class);
-        testee = new AzimutCalculator(listener);
+        testee = new DisplayAzimutCalculator(listener, display);
     }
 
     @After
     public void after() {
         verifyNoMoreInteractions(listener);
+        verifyNoMoreInteractions(display);
     }
 
     @Test
@@ -61,7 +62,7 @@ public class AzimutCalculatorTest {
         // act
         consumer.accept(updates);
         // assert
-        verify(listener, never()).onNewAzimut(anyFloat(), anyBoolean());
+        verify(listener, never()).onNewAzimut(anyFloat());
     }
 
     @Test
@@ -87,12 +88,10 @@ public class AzimutCalculatorTest {
         // act
         runnable.run();
         // assert
-        verify(listener).onNewAzimut(floatCaptor.capture(), booleanCaptor.capture());
+        verify(listener).onNewAzimut(floatCaptor.capture());
         float azimut = -1.5715171f;
         float floatCaptorValue = floatCaptor.getValue();
         assertEquals(azimut, floatCaptorValue, 0.0001f);
-        boolean booleanCaptorValue = booleanCaptor.getValue();
-        assertTrue(booleanCaptorValue);
     }
 
 }

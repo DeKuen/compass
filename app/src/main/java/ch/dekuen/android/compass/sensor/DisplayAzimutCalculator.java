@@ -2,16 +2,20 @@ package ch.dekuen.android.compass.sensor;
 
 import android.hardware.SensorManager;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 
 import ch.dekuen.android.compass.AzimutListener;
 
-public class AzimutCalculator {
+public class DisplayAzimutCalculator {
     private final AzimutListener listener;
+    private final Display display;
     private float[] accelerationMeasurements;
     private float[] magneticMeasurements;
 
-    public AzimutCalculator(AzimutListener listener) {
+    public DisplayAzimutCalculator(AzimutListener listener, Display display) {
         this.listener = listener;
+        this.display = display;
     }
 
     public void onAccelerationSensorChanged(float[] updates) {
@@ -32,7 +36,8 @@ public class AzimutCalculator {
             Log.i(getClass().getName(), "magneticMeasurements is still null");
             return;
         }
-        boolean isPhoneFacingUp = accelerationMeasurements[2] >= 0;
+        // todo
+        // boolean isPhoneFacingUp = accelerationMeasurements[2] >= 0;
         float[] matrixR = new float[9];
         boolean success = SensorManager.getRotationMatrix(matrixR, null, accelerationMeasurements, magneticMeasurements);
         if (!success) {
@@ -45,6 +50,26 @@ public class AzimutCalculator {
         // get angle around the z-axis rotated
         float azimut = orientation[0];
         // send to listener
-        listener.onNewAzimut(azimut, isPhoneFacingUp);
+        listener.onNewAzimut(azimut);
+    }
+
+    protected final double getDisplayRotation() {
+        int degrees;
+        switch (display.getRotation()) {
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+            case Surface.ROTATION_0:
+            default:
+                degrees = 0;
+                break;
+        }
+        return Math.toRadians(degrees);
     }
 }

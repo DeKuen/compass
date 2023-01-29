@@ -5,11 +5,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import static ch.dekuen.android.compass.ReflectionHelper.getFieldValue;
 
-import android.view.Display;
-import android.view.Surface;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -30,14 +27,12 @@ import ch.dekuen.android.compass.ReflectionHelper;
 public class CompassImageViewServiceTest {
     private CompassImageViewService testee;
     private ImageView compassImageView;
-    private Display display;
     private ArgumentCaptor<RotateAnimation> rotateAnimationCaptor;
 
     @Before
     public void before() {
         compassImageView = mock(ImageView.class);
-        display = mock(Display.class);
-        testee = new CompassImageViewService(display, compassImageView);
+        testee = new CompassImageViewService(compassImageView);
         rotateAnimationCaptor = ArgumentCaptor.forClass(RotateAnimation.class);
     }
 
@@ -47,78 +42,52 @@ public class CompassImageViewServiceTest {
     }
 
     @Test
-    public void onNewAzimut_Rotation0_UpdateTextAndRotateImage() {
-        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_0, 0);
-    }
-
-    @Test
-    public void onNewAzimut_Rotation90_UpdateTextAndRotateImage() {
-        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_90, 90);
-    }
-
-    @Test
-    public void onNewAzimut_Rotation180_UpdateTextAndRotateImage() {
-        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_180, 180);
-    }
-
-    @Test
-    public void onNewAzimut_Rotation270_UpdateTextAndRotateImage() {
-        onNewAzimut_WithRotation_UpdateTextAndRotateImage(Surface.ROTATION_270, 270);
-    }
-
-    @Test
-    public void onNewAzimut_CalledStillRotating_UpdateTextAndRotateImage() {
+    public void onNewAzimut_AzimutInRadians_RotateImage() {
         // setup
-        int rotation = Surface.ROTATION_0;
-        int rotationDegrees = 0;
-        float azimutExact = 1f;
-        when(display.getRotation()).thenReturn(rotation);
+        float azimutRadians = (float) Math.PI / 2;
         // act
-        testee.onNewAzimut(azimutExact, true);
-        testee.onNewAzimut(azimutExact, true);
+        testee.onNewAzimut(azimutRadians);
         // assert
-        verify(display).getRotation();
         verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
         RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
-        float azimutDegrees = (float) ((Math.toDegrees(azimutExact) + rotationDegrees + 360) % 360);
-        validateRotationAnimation(rotateAnimation, 0f, -azimutDegrees);
+        double azimutDegrees = Math.toDegrees(azimutRadians);
+        validateRotationAnimation(rotateAnimation, 0f, (float) -azimutDegrees);
     }
 
     @Test
-    public void onNewAzimut_CalledAfterRotating_UpdateTextAndRotateImage() {
+    public void onNewAzimut_CalledStillRotating_RotateImage() {
         // setup
-        int rotation = Surface.ROTATION_0;
-        int rotationDegrees = 0;
-        float azimutExact = 1f;
-        when(display.getRotation()).thenReturn(rotation);
+        float azimutRadians0 = (float) Math.PI / 2;
+        float azimutRadians1 = (float) Math.PI;
         // act
-        testee.onNewAzimut(azimutExact, true);
-        ReflectionHelper.setFieldValue(testee, "isRotating", new AtomicBoolean(false));
-        testee.onNewAzimut(azimutExact, true);
+        testee.onNewAzimut(azimutRadians0);
+        testee.onNewAzimut(azimutRadians1);
         // assert
-        verify(display, times(2)).getRotation();
+        verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
+        RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
+        float azimutDegrees0 = (float) Math.toDegrees(azimutRadians0);
+        validateRotationAnimation(rotateAnimation, 0f, -azimutDegrees0);
+    }
+
+    @Test
+    public void onNewAzimut_CalledAfterRotating_RotateImage() {
+        // setup
+        float azimutRadians0 = (float) Math.PI / 2;
+        float azimutRadians1 = (float) Math.PI;
+        // act
+        testee.onNewAzimut(azimutRadians0);
+        ReflectionHelper.setFieldValue(testee, "isRotating", new AtomicBoolean(false));
+        testee.onNewAzimut(azimutRadians1);
+        // assert
         verify(compassImageView, times(2)).startAnimation(rotateAnimationCaptor.capture());
         List<RotateAnimation> rotateAnimations = rotateAnimationCaptor.getAllValues();
         assertEquals(2, rotateAnimations.size());
-        float azimutDegrees = (float) ((Math.toDegrees(azimutExact) + rotationDegrees + 360) % 360);
+        float azimutDegrees0 = (float) Math.toDegrees(azimutRadians0);
         RotateAnimation rotateAnimation = rotateAnimations.get(0);
-        validateRotationAnimation(rotateAnimation, 0f, -azimutDegrees);
+        validateRotationAnimation(rotateAnimation, 0f, -azimutDegrees0);
         rotateAnimation = rotateAnimations.get(1);
-        validateRotationAnimation(rotateAnimation, -azimutDegrees, -azimutDegrees);
-    }
-
-    private void onNewAzimut_WithRotation_UpdateTextAndRotateImage(int rotation, int rotationDegrees) {
-        // setup
-        float azimutExact = 1f;
-        when(display.getRotation()).thenReturn(rotation);
-        // act
-        testee.onNewAzimut(azimutExact, true);
-        // assert
-        verify(display).getRotation();
-        verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
-        RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
-        double azimutDegrees = (Math.toDegrees(azimutExact) + rotationDegrees + 360) % 360;
-        validateRotationAnimation(rotateAnimation, 0f, (float) -azimutDegrees);
+        float azimutDegrees1 = (float) Math.toDegrees(azimutRadians1);
+        validateRotationAnimation(rotateAnimation, -azimutDegrees0, -azimutDegrees1);
     }
 
     private void validateRotationAnimation(RotateAnimation rotateAnimation, float fromDegrees, float toDegrees) {
