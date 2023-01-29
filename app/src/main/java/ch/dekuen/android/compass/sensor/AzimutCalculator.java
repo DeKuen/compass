@@ -32,19 +32,20 @@ public class AzimutCalculator {
             Log.i(getClass().getName(), "magneticMeasurements is still null");
             return;
         }
-        boolean isPhoneFacingUp = accelerationMeasurements[2] >= 0;
         float[] matrixR = new float[9];
         boolean success = SensorManager.getRotationMatrix(matrixR, null, accelerationMeasurements, magneticMeasurements);
         if (!success) {
-            Log.i(getClass().getName(), "could not calculate rotation matrix");
+            Log.i(getClass().getName(), "could not calculate displayRotation matrix");
             return;
         }
         float[] orientation = new float[3];
         // orientation contains: azimut, pitch and roll
         SensorManager.getOrientation(matrixR, orientation);
-        // get angle around the z-axis rotated
+        // Azimuth, angle of rotation about the -z axis.
+        // Angle between the device's y axis and the magnetic north pole.
+        // The range of values is -π to π.
         float azimut = orientation[0];
         // send to listener
-        listener.onNewAzimut(azimut, isPhoneFacingUp);
+        listener.onNewAzimut(azimut);
     }
 }

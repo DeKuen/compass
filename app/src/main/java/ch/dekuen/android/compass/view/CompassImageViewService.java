@@ -1,6 +1,5 @@
 package ch.dekuen.android.compass.view;
 
-import android.view.Display;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -13,15 +12,15 @@ public class CompassImageViewService extends CompassViewService {
     private double lastDegree = 0;
     private final RotationEndListener rotationEndListener = new RotationEndListener();
 
-    public CompassImageViewService(Display display, ImageView compassImageView) {
-        super(display);
+    public CompassImageViewService(ImageView compassImageView) {
+        super();
         this.compassImageView = compassImageView;
     }
 
     @Override
-    public void onNewAzimut(float azimut, boolean isPhoneFacingUp) {
+    public void onNewAzimut(float azimut) {
         if(isRotating.compareAndSet(false, true)) {
-            double azimutDegrees = getViewDegrees(azimut, isPhoneFacingUp);
+            double azimutDegrees = getViewDegrees(azimut);
             // rotation animation - reverse turn azimutDegrees degrees
             RotateAnimation rotateAnimation = new RotateAnimation(
                     (float) lastDegree,
