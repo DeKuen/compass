@@ -39,8 +39,7 @@ public class CompassSensorEventListenerTest {
     public void before() {
         consumedFloats.clear();
         consumedBooleans.clear();
-        testee = new CompassSensorEventListener();
-        testee.addListener(listener);
+        testee = new CompassSensorEventListener(listener);
     }
 
     @After

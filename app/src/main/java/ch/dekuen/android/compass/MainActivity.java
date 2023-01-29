@@ -33,9 +33,11 @@ public class MainActivity extends Activity {
         Display display = getWindowManager().getDefaultDisplay();
         CompassTextViewService textViewService = new CompassTextViewService(display, azimutTextView);
         CompassImageViewService imageViewService = new CompassImageViewService(display, compassImageView);
-        compassSensorEventListener = new CompassSensorEventListener();
-        compassSensorEventListener.addListener((azimut, isPhoneFacingUp) -> runOnUiThread(() -> textViewService.onNewAzimut(azimut, isPhoneFacingUp)));
-        compassSensorEventListener.addListener((azimut, isPhoneFacingUp) -> runOnUiThread(() -> imageViewService.onNewAzimut(azimut, isPhoneFacingUp)));
+        AzimutListener azimutListener = (azimut, isPhoneFacingUp) -> runOnUiThread(() -> {
+            textViewService.onNewAzimut(azimut, isPhoneFacingUp);
+            imageViewService.onNewAzimut(azimut, isPhoneFacingUp);
+        });
+        compassSensorEventListener = new CompassSensorEventListener(azimutListener);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
 
