@@ -23,10 +23,6 @@ android.hardware.SensorEvent shows a public constructor in Android Studio. But u
 
 Maybe it has something to do with SensorEvent being written in Kotlin and Android Studio showing decompiled Java code.
 
-### Math.atan2(y, x) takes y as first parameter
-
-Lost way to much time with this.
-
 ## Links
 Sensor Coordinate System
 

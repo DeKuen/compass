@@ -12,9 +12,6 @@ public class CoordinatesLowPassFilter {
     }
 
     public void onSensorChanged(float[] updates) {
-        // todo remove
-        consumer.accept(updates.clone());
-        /*
         if(measurements == null) {
             measurements = updates.clone();
         } else {
@@ -23,7 +20,6 @@ public class CoordinatesLowPassFilter {
             measurements[2] = applyFilter(measurements[2], updates[2]);
         }
         consumer.accept(measurements);
-        */
     }
 
     static float applyFilter(float before, float update) {
