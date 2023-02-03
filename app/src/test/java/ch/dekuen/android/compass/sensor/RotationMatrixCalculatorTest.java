@@ -33,18 +33,18 @@ public class RotationMatrixCalculatorTest {
     }
 
     @Test
-    public void onAccelerationSensorChanged_OnlyDataFromAcceleration_sendNothing() {
+    public void onAccelerationSensorChanged_OnlyDataFromAcceleration_SendNothing() {
         Consumer<float[]> consumer = testee::onAccelerationSensorChanged;
-        onSensorChanged_OnlyDataFromAcceleration_sendNothing(consumer);
+        onSensorChanged_OnlyDataFromAcceleration_SendNothing(consumer);
     }
 
     @Test
-    public void onMagneticSensorChanged_OnlyDataFromMagnetometer_sendNothing() {
+    public void onMagneticSensorChanged_OnlyDataFromMagnetometer_SendNothing() {
         Consumer<float[]> consumer = testee::onMagneticSensorChanged;
-        onSensorChanged_OnlyDataFromAcceleration_sendNothing(consumer);
+        onSensorChanged_OnlyDataFromAcceleration_SendNothing(consumer);
     }
 
-    private void onSensorChanged_OnlyDataFromAcceleration_sendNothing(Consumer<float[]> consumer) {
+    private void onSensorChanged_OnlyDataFromAcceleration_SendNothing(Consumer<float[]> consumer) {
         // setup
         float[] updates = {0.1f, 1.2f, 2.3f};
         // act
@@ -54,12 +54,12 @@ public class RotationMatrixCalculatorTest {
     }
 
     @Test
-    public void onAccelerationSensorChanged_AfterMagneticChanged_sendAzimut() {
+    public void onAccelerationSensorChanged_AfterMagneticChanged_SendAzimut() {
         Runnable runnable = () -> {
             testee.onMagneticSensorChanged(MAGNETIC_FIELD);
             testee.onAccelerationSensorChanged(ACCELERATION);
         };
-        onSensorChanged_DataFromBothSensors_sendAzimut(runnable);
+        onSensorChanged_DataFromBothSensors_SendAzimut(runnable);
     }
 
     @Test
@@ -68,10 +68,21 @@ public class RotationMatrixCalculatorTest {
             testee.onMagneticSensorChanged(MAGNETIC_FIELD);
             testee.onAccelerationSensorChanged(ACCELERATION);
         };
-        onSensorChanged_DataFromBothSensors_sendAzimut(runnable);
+        onSensorChanged_DataFromBothSensors_SendAzimut(runnable);
     }
 
-    private void onSensorChanged_DataFromBothSensors_sendAzimut(Runnable runnable) {
+    @Test
+    public void onMagneticSensorChanged_FailedToCalcRotationMatrix_SendNothing() {
+        // setup
+        float[] acceleration = {0f, 0f, 0f};
+        // act
+        testee.onMagneticSensorChanged(MAGNETIC_FIELD);
+        testee.onAccelerationSensorChanged(acceleration);
+        // assert
+        assertEquals(0, measurements.size());
+    }
+
+    private void onSensorChanged_DataFromBothSensors_SendAzimut(Runnable runnable) {
         // setup
         // act
         runnable.run();
