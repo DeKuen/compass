@@ -82,4 +82,5 @@ public class RotationMatrixCalculatorTest {
         measurements.clear();
     }
 
+    // todo: test failed to calc rotation matrix
 }

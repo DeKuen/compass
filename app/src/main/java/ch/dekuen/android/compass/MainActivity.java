@@ -20,7 +20,7 @@ import ch.dekuen.android.compass.view.CompassTextViewService;
 public class MainActivity extends Activity {
 
     // SENSOR_DELAY_GAME for fast response, alternatively use SENSOR_DELAY_UI or SENSOR_DELAY_NORMAL
-    private static final int SAMPLING_PERIOD_US = SensorManager.SENSOR_DELAY_GAME;
+    private static final int SAMPLING_PERIOD_US = SensorManager.SENSOR_DELAY_NORMAL;
 
     private CompassSensorEventListener compassSensorEventListener;
 
