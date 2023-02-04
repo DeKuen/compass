@@ -37,8 +37,6 @@ public class AzimutCalculator {
         if(dividedCos < -1 || dividedCos > 1) {
             return 0f;
         }
-        return (float) Math.acos(dividedCos)
-                *
-                (azimut < 0 ? -1 : 1);
+        return (float) Math.acos(dividedCos);
     }
 }
