@@ -1,40 +1,32 @@
 package ch.dekuen.android.compass.sensor;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import android.view.Display;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.robolectric.RobolectricTestRunner;
 
-import ch.dekuen.android.compass.AzimutListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 @RunWith(RobolectricTestRunner.class)
 public class OrientationCalculatorTest {
     private OrientationCalculator testee;
-    private AzimutListener listener;
-    private Display display;
-    private ArgumentCaptor<Float> floatCaptor;
+    private final List<float[]> measurements = new ArrayList<>();
+    private final Consumer<float[]> consumer = floats -> measurements.add(floats.clone());
 
     @Before
     public void before() {
-        listener = mock(AzimutListener.class);
-        display = mock(Display.class);
-        floatCaptor = ArgumentCaptor.forClass(Float.class);
-        testee = new OrientationCalculator(listener, display);
+        testee = new OrientationCalculator(consumer);
     }
 
     @After
     public void after() {
-        verifyNoMoreInteractions(listener);
-        verifyNoMoreInteractions(display);
+        Assertions.assertEquals(0, measurements.size());
     }
 
     @Test
@@ -44,9 +36,9 @@ public class OrientationCalculatorTest {
         // act
         testee.calculate(matrixR);
         // assert
-        verify(listener).onNewAzimut(floatCaptor.capture());
-        float azimut = -1.5715171f;
-        float floatCaptorValue = floatCaptor.getValue();
-        assertEquals(azimut, floatCaptorValue, 0.0001f);
+        float[] updates = {-1.5715171f, -0.7853979f, -0.0010193676f};
+        Assertions.assertEquals(1, measurements.size());
+        assertArrayEquals(updates, measurements.get(0), 0.0001f);
+        measurements.clear();
     }
 }
