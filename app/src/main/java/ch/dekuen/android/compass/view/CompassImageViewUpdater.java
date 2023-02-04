@@ -6,13 +6,15 @@ import android.widget.ImageView;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CompassImageViewService extends CompassViewService {
+import ch.dekuen.android.compass.AzimutListener;
+
+public class CompassImageViewUpdater implements AzimutListener {
     private final ImageView compassImageView;
     private final AtomicBoolean isRotating = new AtomicBoolean(false);
     private double lastDegree = 0;
     private final RotationEndListener rotationEndListener = new RotationEndListener();
 
-    public CompassImageViewService(ImageView compassImageView) {
+    public CompassImageViewUpdater(ImageView compassImageView) {
         super();
         this.compassImageView = compassImageView;
     }
@@ -20,7 +22,7 @@ public class CompassImageViewService extends CompassViewService {
     @Override
     public void onNewAzimut(float azimut) {
         if(isRotating.compareAndSet(false, true)) {
-            double azimutDegrees = getViewDegrees(azimut);
+            double azimutDegrees = Math.toDegrees(azimut);
             // rotation animation - reverse turn azimutDegrees degrees
             RotateAnimation rotateAnimation = new RotateAnimation(
                     (float) lastDegree,

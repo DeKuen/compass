@@ -24,15 +24,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import ch.dekuen.android.compass.ReflectionHelper;
 
 @RunWith(RobolectricTestRunner.class)
-public class CompassImageViewServiceTest {
-    private CompassImageViewService testee;
+public class CompassImageViewUpdaterTest {
+    private CompassImageViewUpdater testee;
     private ImageView compassImageView;
     private ArgumentCaptor<RotateAnimation> rotateAnimationCaptor;
 
     @Before
     public void before() {
         compassImageView = mock(ImageView.class);
-        testee = new CompassImageViewService(compassImageView);
+        testee = new CompassImageViewUpdater(compassImageView);
         rotateAnimationCaptor = ArgumentCaptor.forClass(RotateAnimation.class);
     }
 

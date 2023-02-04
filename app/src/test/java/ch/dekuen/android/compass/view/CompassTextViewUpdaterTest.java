@@ -3,7 +3,7 @@ package ch.dekuen.android.compass.view;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static ch.dekuen.android.compass.view.CompassTextViewService.DECIMAL_FORMAT;
+import static ch.dekuen.android.compass.view.CompassTextViewUpdater.DECIMAL_FORMAT;
 
 import android.widget.TextView;
 
@@ -14,14 +14,14 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
-public class CompassTextViewServiceTest {
-    private CompassTextViewService testee;
+public class CompassTextViewUpdaterTest {
+    private CompassTextViewUpdater testee;
     private TextView azimutTextView;
 
     @Before
     public void before() {
         azimutTextView = mock(TextView.class);
-        testee = new CompassTextViewService(azimutTextView);
+        testee = new CompassTextViewUpdater(azimutTextView);
     }
 
     @After

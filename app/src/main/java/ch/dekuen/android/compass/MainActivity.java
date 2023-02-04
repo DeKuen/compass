@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import ch.dekuen.android.compass.sensor.AzimutCalculator;
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
 import ch.dekuen.android.compass.sensor.CoordinatesLowPassFilter;
-import ch.dekuen.android.compass.view.CompassImageViewService;
-import ch.dekuen.android.compass.view.CompassTextViewService;
+import ch.dekuen.android.compass.view.CompassImageViewUpdater;
+import ch.dekuen.android.compass.view.CompassTextViewUpdater;
 
 public class MainActivity extends Activity {
 
@@ -45,12 +45,12 @@ public class MainActivity extends Activity {
         ImageView compassImageView = findViewById(R.id.compassImageView);
         // TextView that will display the azimut in degrees
         TextView azimutTextView = findViewById(R.id.azimutTextView);
-        CompassTextViewService textViewService = new CompassTextViewService(azimutTextView);
-        CompassImageViewService imageViewService = new CompassImageViewService(compassImageView);
-        return azimut -> runOnUiThread(() -> {
-            textViewService.onNewAzimut(azimut);
-            imageViewService.onNewAzimut(azimut);
-        });
+        CompassTextViewUpdater compassTextViewUpdater = new CompassTextViewUpdater(azimutTextView);
+        CompassImageViewUpdater compassImageViewUpdater = new CompassImageViewUpdater(compassImageView);
+        return azimut -> {
+            compassTextViewUpdater.onNewAzimut(azimut);
+            compassImageViewUpdater.onNewAzimut(azimut);
+        };
     }
 
     @Override
