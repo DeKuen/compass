@@ -17,7 +17,10 @@ public class CompassTextViewUpdater implements AzimutListener {
 
     @Override
     public void onNewAzimut(float azimutRadians) {
-        double azimutDegrees = Math.toDegrees(azimutRadians);
+        double azimutDegrees = Math.toDegrees(
+                // force positive angle
+                (azimutRadians + 2 * Math.PI) % (2 * Math.PI)
+        );
         String text = DECIMAL_FORMAT.format(azimutDegrees);
         azimutTextView.setText(text);
     }
