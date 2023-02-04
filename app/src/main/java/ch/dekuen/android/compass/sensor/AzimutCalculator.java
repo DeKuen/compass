@@ -3,15 +3,15 @@ package ch.dekuen.android.compass.sensor;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import java.util.function.Consumer;
+import ch.dekuen.android.compass.AzimutListener;
 
-public class RotationMatrixCalculator {
-    private final Consumer<float[]> consumer;
+public class AzimutCalculator {
+    private final AzimutListener listener;
     private float[] accelerationMeasurements;
     private float[] magneticMeasurements;
 
-    public RotationMatrixCalculator(Consumer<float[]> consumer) {
-        this.consumer = consumer;
+    public AzimutCalculator(AzimutListener listener) {
+        this.listener = listener;
     }
 
     public void onAccelerationSensorChanged(float[] updates) {
@@ -38,6 +38,14 @@ public class RotationMatrixCalculator {
             Log.i(getClass().getName(), "could not calculate displayRotation matrix");
             return;
         }
-        consumer.accept(matrixR);
+        float[] orientation = new float[3];
+        // orientation contains: azimut, pitch and roll
+        SensorManager.getOrientation(matrixR, orientation);
+        // Azimuth, angle of rotation about the -z axis.
+        // Angle between the device's y axis and the magnetic north pole.
+        // The range of values is -π to π.
+        float azimut = orientation[0];
+        // send to listener
+        listener.onNewAzimut(azimut);
     }
 }
