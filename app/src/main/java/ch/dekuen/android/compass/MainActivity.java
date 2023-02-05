@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
+import android.os.Process;
 import android.view.Display;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +30,8 @@ public class MainActivity extends Activity {
 
     private CompassSensorEventListener accelerationSensorEventListener;
     private CompassSensorEventListener magneticSensorEventListener;
+    private HandlerThread sensorHandlerThread;
+    private Handler sensorHandler;
 
     // device sensor manager
     private SensorManager sensorManager;
@@ -62,6 +68,28 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        // to stop the listener and save battery
+        sensorManager.unregisterListener(compassSensorEventListener);
+        sensorHandlerThread.quitSafely();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        sensorHandlerThread = new HandlerThread("Sensor thread", Process.THREAD_PRIORITY_MORE_FAVORABLE);
+        sensorHandlerThread.start();
+        sensorHandler = new Handler(sensorHandlerThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
+
+        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        sensorManager.registerListener(compassSensorEventListener, accelerometer, SAMPLING_PERIOD_US, sensorHandler);
+        sensorManager.registerListener(compassSensorEventListener, magnetometer, SAMPLING_PERIOD_US, sensorHandler);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -77,4 +105,12 @@ public class MainActivity extends Activity {
         sensorManager.unregisterListener(accelerationSensorEventListener);
         sensorManager.unregisterListener(magneticSensorEventListener);
     }
+
+    private static class MyHandler extends Handler {
+        @Override
+        public void handleMessage(Message message) {
+
+        }
+    }
+
 }

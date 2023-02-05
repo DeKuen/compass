@@ -38,7 +38,8 @@ public class CompassImageViewUpdater implements AzimutListener {
             rotateAnimation.setFillAfter(true);
             rotateAnimation.setAnimationListener(rotationEndListener);
             // Start animation of compass image
-            compassImageView.startAnimation(rotateAnimation);
+            // todo enable
+            // compassImageView.startAnimation(rotateAnimation);
         }
     }
 
