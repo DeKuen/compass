@@ -8,12 +8,10 @@ import android.util.Log;
 import java.util.function.Consumer;
 
 public class CompassSensorEventListener implements SensorEventListener {
-    private final Consumer<float[]> accelerationConsumer;
-    private final Consumer<float[]> magneticConsumer;
+    private final Consumer<float[]> consumer;
 
-    public CompassSensorEventListener(Consumer<float[]> accelerationConsumer, Consumer<float[]> magneticConsumer) {
-        this.accelerationConsumer = accelerationConsumer;
-        this.magneticConsumer = magneticConsumer;
+    public CompassSensorEventListener(Consumer<float[]> consumer) {
+        this.consumer = consumer;
     }
 
     @Override
@@ -27,14 +25,7 @@ public class CompassSensorEventListener implements SensorEventListener {
             Log.e(getClass().getName(), "Sensor is null");
             return;
         }
-        int sensorType = sensor.getType();
-        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
-            accelerationConsumer.accept(event.values);
-        } else if (sensorType == Sensor.TYPE_MAGNETIC_FIELD) {
-            magneticConsumer.accept(event.values);
-        } else {
-            Log.e(getClass().getName(), "Unexpected sensor type");
-        }
+        consumer.accept(event.values);
     }
 
     @Override
