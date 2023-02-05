@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
@@ -52,6 +53,10 @@ public class CompassTextViewUpdaterTest {
         // assert
         verify(compassViewOrientationCorrector).correctOrientation(azimutRadians, isDisplayUp);
         String text = DECIMAL_FORMAT.format(90);
+        ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
+        verify(azimutTextView).post(captor.capture());
+        Runnable runnable = captor.getValue();
+        runnable.run();
         verify(azimutTextView).setText(text);
     }
 }

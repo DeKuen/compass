@@ -22,6 +22,7 @@ public class CompassTextViewUpdater implements AzimutListener {
                 compassViewOrientationCorrector.correctOrientation(azimutRadians, isDisplayUp)
         );
         String text = DECIMAL_FORMAT.format(azimutDegrees);
-        azimutTextView.setText(text);
+        // Update text in UI thread
+        azimutTextView.post(() -> azimutTextView.setText(text));
     }
 }

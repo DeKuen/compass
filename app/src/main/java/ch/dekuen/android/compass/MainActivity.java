@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Process;
 import android.view.Display;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +29,7 @@ public class MainActivity extends Activity {
 
     private CompassSensorEventListener accelerationSensorEventListener;
     private CompassSensorEventListener magneticSensorEventListener;
+    private HandlerThread sensorHandlerThread;
 
     // device sensor manager
     private SensorManager sensorManager;
@@ -64,10 +68,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        sensorHandlerThread = startBackgroundHandlerThread("Sensor thread");
+        //Blocks until looper is prepared, which is fairly quick
+        Handler sensorHandler = new Handler(sensorHandlerThread.getLooper());
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(accelerationSensorEventListener, accelerometer, SAMPLING_PERIOD_US);
-        sensorManager.registerListener(magneticSensorEventListener, magnetometer, SAMPLING_PERIOD_US);
+        sensorManager.registerListener(accelerationSensorEventListener, accelerometer, SAMPLING_PERIOD_US, sensorHandler);
+        sensorManager.registerListener(magneticSensorEventListener, magnetometer, SAMPLING_PERIOD_US, sensorHandler);
     }
 
     @Override
@@ -76,5 +84,14 @@ public class MainActivity extends Activity {
         // to stop the listeners and save battery
         sensorManager.unregisterListener(accelerationSensorEventListener);
         sensorManager.unregisterListener(magneticSensorEventListener);
+        sensorHandlerThread.quitSafely();
+    }
+
+    private static HandlerThread startBackgroundHandlerThread(String threadName) {
+        HandlerThread handlerThread = new HandlerThread(threadName, Process.THREAD_PRIORITY_LESS_FAVORABLE);
+        // seems to be necessary to set priority by setter
+        handlerThread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        handlerThread.start();
+        return handlerThread;
     }
 }
