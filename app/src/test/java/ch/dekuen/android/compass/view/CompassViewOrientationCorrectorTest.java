@@ -22,7 +22,6 @@ public class CompassViewOrientationCorrectorTest {
     private static final float AZIMUT_NORTH = 0f;
     private static final float AZIMUT_NORTH_EAST = (float) (MathConstants.PI / 4);
     private static final float AZIMUT_SOUTH_EAST = (float) (MathConstants.PI * 3 / 4);
-    private static final float AZIMUT_SOUTH = (float) MathConstants.PI;
     private static final float AZIMUT_SOUTH_WEST = (float) (MathConstants.PI * 5 / 4);
     private static final float AZIMUT_NORTH_WEST = (float) (MathConstants.PI * 7 / 4);
 
