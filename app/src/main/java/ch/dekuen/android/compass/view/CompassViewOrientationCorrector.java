@@ -2,10 +2,11 @@ package ch.dekuen.android.compass.view;
 
 import android.view.Surface;
 
-import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathUtils;
 
 import java.util.function.Supplier;
+
+import ch.dekuen.android.compass.MathConstants;
 
 public class CompassViewOrientationCorrector {
     private final Supplier<Integer> getDisplayRotation;
@@ -24,18 +25,18 @@ public class CompassViewOrientationCorrector {
                         + getDisplayRotationInRadians()
                 ,
                 // force positive angle by centering on π
-                FastMath.PI
+                MathConstants.PI
         );
     }
 
     private double getDisplayRotationInRadians() {
         switch (getDisplayRotation.get()) {
             case Surface.ROTATION_90:
-                return FastMath.PI * 0.5;
+                return MathConstants.PI_HALF;
             case Surface.ROTATION_180:
-                return FastMath.PI;
+                return MathConstants.PI;
             case Surface.ROTATION_270:
-                return FastMath.PI * 1.5;
+                return MathConstants.PI_THREE_HALVES;
             case Surface.ROTATION_0:
             default:
                 return 0d;

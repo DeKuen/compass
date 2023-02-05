@@ -18,6 +18,7 @@ import org.robolectric.RobolectricTestRunner;
 import java.util.function.Consumer;
 
 import ch.dekuen.android.compass.AzimutListener;
+import ch.dekuen.android.compass.MathConstants;
 
 @RunWith(RobolectricTestRunner.class)
 public class AzimutCalculatorTest {
@@ -30,10 +31,10 @@ public class AzimutCalculatorTest {
     private static final float[] MAGNETIC_FIELD_FLAT_SOUTH = {AZIMUT_NORTH, -1f, -1f};
     private static final float[] MAGNETIC_FIELD_FLAT_SOUTH_EAST = {-1f, -1f, -1f};
     private static final float[] MAGNETIC_FIELD_FLAT_SOUTH_WEST = {1f, -1f, -1f};
-    private static final float AZIMUT_SOUTH_WEST = (float) -Math.PI * 3 / 4;
-    private static final float AZIMUT_SOUTH_EAST = (float) Math.PI * 3 / 4;
-    private static final float AZIMUT_NORTH_EAST = (float) -Math.PI / 4;
-    private static final float AZIMUT_SOUTH = (float) -Math.PI;
+    private static final float AZIMUT_SOUTH_WEST = (float) -MathConstants.PI * 3 / 4;
+    private static final float AZIMUT_SOUTH_EAST = (float) MathConstants.PI * 3 / 4;
+    private static final float AZIMUT_NORTH_EAST = (float) -MathConstants.PI / 4;
+    private static final float AZIMUT_SOUTH = (float) -MathConstants.PI;
     private AzimutCalculator testee;
     private AzimutListener listener;
     private ArgumentCaptor<Float> floatCaptor;

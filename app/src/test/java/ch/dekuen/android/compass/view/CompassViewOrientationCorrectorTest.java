@@ -10,19 +10,21 @@ import org.robolectric.RobolectricTestRunner;
 
 import java.util.function.Supplier;
 
+import ch.dekuen.android.compass.MathConstants;
+
 @RunWith(RobolectricTestRunner.class)
 public class CompassViewOrientationCorrectorTest {
     // Display class is final and can't be mocked normally. Thus the Supplier construct
-    private static final Supplier<Integer> getDisplayRotation_0 = () -> 0;
+    private static final Supplier<Integer> getDisplayRotation_0 = () -> Surface.ROTATION_0;
     private static final Supplier<Integer> getDisplayRotation_90 = () -> Surface.ROTATION_90;
     private static final Supplier<Integer> getDisplayRotation_180 = () -> Surface.ROTATION_180;
     private static final Supplier<Integer> getDisplayRotation_270 = () -> Surface.ROTATION_270;
     private static final float AZIMUT_NORTH = 0f;
-    private static final float AZIMUT_NORTH_EAST = (float) (Math.PI / 4);
-    private static final float AZIMUT_SOUTH_EAST = (float) (Math.PI * 3 / 4);
-    private static final float AZIMUT_SOUTH = (float) Math.PI;
-    private static final float AZIMUT_SOUTH_WEST = (float) (Math.PI * 5 / 4);
-    private static final float AZIMUT_NORTH_WEST = (float) (Math.PI * 7 / 4);
+    private static final float AZIMUT_NORTH_EAST = (float) (MathConstants.PI / 4);
+    private static final float AZIMUT_SOUTH_EAST = (float) (MathConstants.PI * 3 / 4);
+    private static final float AZIMUT_SOUTH = (float) MathConstants.PI;
+    private static final float AZIMUT_SOUTH_WEST = (float) (MathConstants.PI * 5 / 4);
+    private static final float AZIMUT_NORTH_WEST = (float) (MathConstants.PI * 7 / 4);
 
     private CompassViewOrientationCorrector testee;
 

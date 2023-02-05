@@ -22,6 +22,7 @@ import org.robolectric.RobolectricTestRunner;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import ch.dekuen.android.compass.MathConstants;
 import ch.dekuen.android.compass.ReflectionHelper;
 
 @RunWith(RobolectricTestRunner.class)
@@ -48,7 +49,7 @@ public class CompassImageViewUpdaterTest {
     @Test
     public void onNewAzimut_AzimutInRadians_RotateImage() {
         // setup
-        float azimutRadians = (float) Math.PI / 2;
+        float azimutRadians = (float) MathConstants.PI_HALF;
         boolean isDisplayUp = true;
         when(compassViewOrientationCorrector.correctOrientation(azimutRadians, isDisplayUp)).thenReturn((double) azimutRadians);
         // act
@@ -64,7 +65,7 @@ public class CompassImageViewUpdaterTest {
     @Test
     public void onNewAzimut_DisplayDown_RotateImage() {
         // setup
-        float azimutRadians = (float) Math.PI / 2;
+        float azimutRadians = (float) MathConstants.PI_HALF;
         boolean isDisplayUp = false;
         when(compassViewOrientationCorrector.correctOrientation(azimutRadians, isDisplayUp)).thenReturn((double) -azimutRadians);
         // act
@@ -80,8 +81,8 @@ public class CompassImageViewUpdaterTest {
     @Test
     public void onNewAzimut_CalledStillRotating_RotateImage() {
         // setup
-        float azimutRadians0 = (float) Math.PI / 2;
-        float azimutRadians1 = (float) Math.PI;
+        float azimutRadians0 = (float) MathConstants.PI_HALF;
+        float azimutRadians1 = (float) MathConstants.PI;
         boolean isDisplayUp = true;
         when(compassViewOrientationCorrector.correctOrientation(azimutRadians0, isDisplayUp)).thenReturn((double) azimutRadians0);
         // act
@@ -98,8 +99,8 @@ public class CompassImageViewUpdaterTest {
     @Test
     public void onNewAzimut_CalledAfterRotating_RotateImage() {
         // setup
-        float azimutRadians0 = (float) Math.PI / 2;
-        float azimutRadians1 = (float) Math.PI;
+        float azimutRadians0 = (float) MathConstants.PI_HALF;
+        float azimutRadians1 = (float) MathConstants.PI;
         boolean isDisplayUp = true;
         when(compassViewOrientationCorrector.correctOrientation(azimutRadians0, isDisplayUp)).thenReturn((double) azimutRadians0);
         when(compassViewOrientationCorrector.correctOrientation(azimutRadians1, isDisplayUp)).thenReturn((double) azimutRadians1);

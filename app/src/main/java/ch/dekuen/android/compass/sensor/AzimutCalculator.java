@@ -4,6 +4,7 @@ import android.hardware.SensorManager;
 import android.util.Log;
 
 import ch.dekuen.android.compass.AzimutListener;
+import ch.dekuen.android.compass.MathConstants;
 
 public class AzimutCalculator {
     private final AzimutListener listener;
@@ -56,7 +57,7 @@ public class AzimutCalculator {
         // The range of values is -π to π.
         float roll = orientation[2];
 
-        boolean isDisplayUp = Math.abs(roll) <= Math.PI / 2;
+        boolean isDisplayUp = Math.abs(roll) <= MathConstants.PI_HALF;
         // send to listener
         listener.onNewAzimut(azimut, isDisplayUp);
     }
