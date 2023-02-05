@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 public class CoordinatesLowPassFilter {
     static final float LOW_PASS_FILTER_ALPHA = 0.97f;
+    public static final float LOW_PASS_FILTER_ONE_MINUS_ALPHA = 1 - LOW_PASS_FILTER_ALPHA;
     private final Consumer<float[]> consumer;
     private float[] measurements;
 
@@ -23,6 +24,6 @@ public class CoordinatesLowPassFilter {
     }
 
     static float applyFilter(float before, float update) {
-        return LOW_PASS_FILTER_ALPHA * before + (1 - LOW_PASS_FILTER_ALPHA) * update;
+        return LOW_PASS_FILTER_ALPHA * before + LOW_PASS_FILTER_ONE_MINUS_ALPHA * update;
     }
 }
