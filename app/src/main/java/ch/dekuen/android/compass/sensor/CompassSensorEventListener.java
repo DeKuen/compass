@@ -9,9 +9,11 @@ import java.util.function.Consumer;
 
 public class CompassSensorEventListener implements SensorEventListener {
     private final Consumer<float[]> consumer;
+    private final int sensorType;
 
-    public CompassSensorEventListener(Consumer<float[]> consumer) {
+    public CompassSensorEventListener(Consumer<float[]> consumer, int sensorType) {
         this.consumer = consumer;
+        this.sensorType = sensorType;
     }
 
     @Override
@@ -25,6 +27,13 @@ public class CompassSensorEventListener implements SensorEventListener {
             Log.e(getClass().getName(), "Sensor is null");
             return;
         }
+        int type = sensor.getType();
+        if (sensorType != type) {
+            Log.e(getClass().getName(), "Unexpected sensor type " + type + ". Expected " + sensorType);
+            return;
+        }
+
+
         consumer.accept(event.values);
     }
 

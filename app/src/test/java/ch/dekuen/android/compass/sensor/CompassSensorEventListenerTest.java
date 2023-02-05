@@ -24,23 +24,20 @@ import ch.dekuen.android.compass.ReflectionHelper;
 @RunWith(RobolectricTestRunner.class)
 public class CompassSensorEventListenerTest {
     public static final float[] VALUES = {0.1f, 1.2f, 2.3f};
+    public static final int SENSOR_TYPE = -99;
     private CompassSensorEventListener testee;
-    private float[] accelerationMeasurements;
-    private float[] magneticMeasurements;
-    private final Consumer<float[]> accelerationConsumer = floats -> accelerationMeasurements = floats;
-    private final Consumer<float[]> magneticConsumer = floats -> magneticMeasurements = floats;
+    private float[] measurements;
+    private final Consumer<float[]> consumer = floats -> measurements = floats;
 
     @Before
     public void before() {
-        accelerationMeasurements = null;
-        magneticMeasurements = null;
-        testee = new CompassSensorEventListener(accelerationConsumer, magneticConsumer);
+        measurements = null;
+        testee = new CompassSensorEventListener(consumer, SENSOR_TYPE);
     }
 
     @After
     public void after() {
-        assertNull(accelerationMeasurements);
-        assertNull(magneticMeasurements);
+        assertNull(measurements);
     }
 
     @Test
@@ -48,7 +45,7 @@ public class CompassSensorEventListenerTest {
         // setup
         Sensor sensor = mock(Sensor.class);
         // act
-        testee.onAccuracyChanged(sensor, -99);
+        testee.onAccuracyChanged(sensor, SENSOR_TYPE);
         // assert
         verifyNoMoreInteractions(sensor);
     }
@@ -74,37 +71,24 @@ public class CompassSensorEventListenerTest {
     public void onSensorChanged_UnknownSensorType_consumeNothing() {
         // setup
         Sensor sensor = mock(Sensor.class);
-        SensorEvent event = mockEvent(sensor, -99, null);
+        SensorEvent event = mockEvent(sensor, 7, null);
         // act
         testee.onSensorChanged(event);
-        //
+        // assert
         verifySensorEvent(event);
     }
 
     @Test
-    public void onSensorChanged_DataFromAcceleration_consumeAcceleration() {
-        onSensorChanged_DataFromOneSensor_consumeData(Sensor.TYPE_ACCELEROMETER);
-        // assert
-        assertEquals(VALUES, accelerationMeasurements);
-        accelerationMeasurements = null;
-    }
-
-    @Test
-    public void onSensorChanged_DataFromMagnetometer_consumeMagnetic() {
-        onSensorChanged_DataFromOneSensor_consumeData(Sensor.TYPE_MAGNETIC_FIELD);
-        // assert
-        assertEquals(VALUES, magneticMeasurements);
-        magneticMeasurements = null;
-    }
-
-    private void onSensorChanged_DataFromOneSensor_consumeData(int type) {
+    public void onSensorChanged_DataFromSensor_consumeData() {
         // setup
         Sensor sensor = mock(Sensor.class);
-        SensorEvent event = mockEvent(sensor, type, VALUES);
+        SensorEvent event = mockEvent(sensor, SENSOR_TYPE, VALUES);
         // act
         testee.onSensorChanged(event);
-        //
+        // assert
         verifySensorEvent(event);
+        assertEquals(VALUES, measurements);
+        measurements = null;
     }
 
     private static SensorEvent mockEvent(Sensor sensor, int type, float[] values) {
