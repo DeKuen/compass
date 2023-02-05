@@ -1,6 +1,7 @@
 package ch.dekuen.android.compass.sensor;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -21,21 +22,29 @@ import ch.dekuen.android.compass.AzimutListener;
 @RunWith(RobolectricTestRunner.class)
 public class AzimutCalculatorTest {
     private static final float G = 9.81f;
-    private static final float[] ACCELERATION_FLAT_ZERO = {0f, 0f, G};
-    private static final float[] MAGNETIC_FIELD_FLAT_NORTH = {0f, 1f, -1f};
+    public static final float AZIMUT_NORTH = 0f;
+    private static final float[] ACCELERATION_FLAT_ZERO = {AZIMUT_NORTH, AZIMUT_NORTH, G};
+    private static final float[] ACCELERATION_FLAT_DISPLAY_DOWN = {AZIMUT_NORTH, AZIMUT_NORTH, -G};
+    private static final float[] MAGNETIC_FIELD_FLAT_NORTH = {AZIMUT_NORTH, 1f, -1f};
     private static final float[] MAGNETIC_FIELD_FLAT_NORTH_EAST = {1f, 1f, -1f};
-    private static final float[] MAGNETIC_FIELD_FLAT_SOUTH = {0f, -1f, -1f};
+    private static final float[] MAGNETIC_FIELD_FLAT_SOUTH = {AZIMUT_NORTH, -1f, -1f};
     private static final float[] MAGNETIC_FIELD_FLAT_SOUTH_EAST = {-1f, -1f, -1f};
     private static final float[] MAGNETIC_FIELD_FLAT_SOUTH_WEST = {1f, -1f, -1f};
+    private static final float AZIMUT_SOUTH_WEST = (float) -Math.PI * 3 / 4;
+    private static final float AZIMUT_SOUTH_EAST = (float) Math.PI * 3 / 4;
+    private static final float AZIMUT_NORTH_EAST = (float) -Math.PI / 4;
+    private static final float AZIMUT_SOUTH = (float) -Math.PI;
     private AzimutCalculator testee;
     private AzimutListener listener;
     private ArgumentCaptor<Float> floatCaptor;
+    private ArgumentCaptor<Boolean> booleanCaptor;
 
     @Before
     public void before() {
         listener = mock(AzimutListener.class);
         testee = new AzimutCalculator(listener);
         floatCaptor = ArgumentCaptor.forClass(Float.class);
+        booleanCaptor = ArgumentCaptor.forClass(Boolean.class);
     }
 
     @After
@@ -61,7 +70,7 @@ public class AzimutCalculatorTest {
         // act
         consumer.accept(updates);
         // assert
-        verify(listener, never()).onNewAzimut(anyFloat());
+        verify(listener, never()).onNewAzimut(anyFloat(), anyBoolean());
     }
 
     @Test
@@ -70,8 +79,7 @@ public class AzimutCalculatorTest {
             testee.onAccelerationSensorChanged(ACCELERATION_FLAT_ZERO);
             testee.onMagneticSensorChanged(MAGNETIC_FIELD_FLAT_NORTH);
         };
-        float azimutExpected = 0f;
-        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, azimutExpected);
+        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, AZIMUT_NORTH, true);
     }
 
     @Test
@@ -80,8 +88,7 @@ public class AzimutCalculatorTest {
             testee.onMagneticSensorChanged(MAGNETIC_FIELD_FLAT_NORTH);
             testee.onAccelerationSensorChanged(ACCELERATION_FLAT_ZERO);
         };
-        float azimutExpected = 0f;
-        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, azimutExpected);
+        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, AZIMUT_NORTH, true);
     }
 
     @Test
@@ -90,8 +97,7 @@ public class AzimutCalculatorTest {
             testee.onMagneticSensorChanged(MAGNETIC_FIELD_FLAT_SOUTH);
             testee.onAccelerationSensorChanged(ACCELERATION_FLAT_ZERO);
         };
-        float azimutExpected = (float) -Math.PI;
-        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, azimutExpected);
+        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, AZIMUT_SOUTH, true);
     }
 
     @Test
@@ -100,8 +106,16 @@ public class AzimutCalculatorTest {
             testee.onMagneticSensorChanged(MAGNETIC_FIELD_FLAT_SOUTH_EAST);
             testee.onAccelerationSensorChanged(ACCELERATION_FLAT_ZERO);
         };
-        float azimutExpected = (float) Math.PI * 3 / 4;
-        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, azimutExpected);
+        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, AZIMUT_SOUTH_EAST, true);
+    }
+
+    @Test
+    public void onMagneticSensorChanged_FlatSouthEastAndDisplayDown_sendSouthWestAzimut() {
+        Runnable runnable = () -> {
+            testee.onMagneticSensorChanged(MAGNETIC_FIELD_FLAT_SOUTH_EAST);
+            testee.onAccelerationSensorChanged(ACCELERATION_FLAT_DISPLAY_DOWN);
+        };
+        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, AZIMUT_SOUTH_WEST, false);
     }
 
     @Test
@@ -110,8 +124,7 @@ public class AzimutCalculatorTest {
             testee.onMagneticSensorChanged(MAGNETIC_FIELD_FLAT_SOUTH_WEST);
             testee.onAccelerationSensorChanged(ACCELERATION_FLAT_ZERO);
         };
-        float azimutExpected = (float) - Math.PI * 3 / 4;
-        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, azimutExpected);
+        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, AZIMUT_SOUTH_WEST, true);
     }
 
     @Test
@@ -120,29 +133,30 @@ public class AzimutCalculatorTest {
             testee.onMagneticSensorChanged(MAGNETIC_FIELD_FLAT_NORTH_EAST);
             testee.onAccelerationSensorChanged(ACCELERATION_FLAT_ZERO);
         };
-        float azimutExpected = (float) -Math.PI / 4;
-        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, azimutExpected);
+        onSensorChanged_DataFromBothSensors_SendAzimut(runnable, AZIMUT_NORTH_EAST, true);
     }
 
     @Test
     public void onMagneticSensorChanged_FailedToCalcRotationMatrix_SendNothing() {
         // setup
-        float[] acceleration = {0f, 0f, 0f};
+        float[] acceleration = {AZIMUT_NORTH, AZIMUT_NORTH, AZIMUT_NORTH};
         // act
         testee.onMagneticSensorChanged(MAGNETIC_FIELD_FLAT_NORTH);
         testee.onAccelerationSensorChanged(acceleration);
         // assert
-        verify(listener, never()).onNewAzimut(anyFloat());
+        verify(listener, never()).onNewAzimut(anyFloat(), anyBoolean());
     }
 
-    private void onSensorChanged_DataFromBothSensors_SendAzimut(Runnable runnable, float azimutExpected) {
+    private void onSensorChanged_DataFromBothSensors_SendAzimut(Runnable runnable, float azimutExpected, boolean expectedIsDisplayUp) {
         // setup
         // act
         runnable.run();
         // assert
-        verify(listener).onNewAzimut(floatCaptor.capture());
+        verify(listener).onNewAzimut(floatCaptor.capture(), booleanCaptor.capture());
         float floatCaptorValue = floatCaptor.getValue();
         assertEquals(azimutExpected, floatCaptorValue, 0.00001f);
+        Boolean booleanCaptorValue = booleanCaptor.getValue();
+        assertEquals(expectedIsDisplayUp, booleanCaptorValue);
     }
 
 }

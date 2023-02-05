@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static ch.dekuen.android.compass.ReflectionHelper.getFieldValue;
 
 import android.view.animation.Animation;
@@ -27,27 +28,33 @@ import ch.dekuen.android.compass.ReflectionHelper;
 public class CompassImageViewUpdaterTest {
     private CompassImageViewUpdater testee;
     private ImageView compassImageView;
+    private CompassViewOrientationCorrector compassViewOrientationCorrector;
     private ArgumentCaptor<RotateAnimation> rotateAnimationCaptor;
 
     @Before
     public void before() {
         compassImageView = mock(ImageView.class);
-        testee = new CompassImageViewUpdater(compassImageView);
+        compassViewOrientationCorrector = mock(CompassViewOrientationCorrector.class);
+        testee = new CompassImageViewUpdater(compassImageView, compassViewOrientationCorrector);
         rotateAnimationCaptor = ArgumentCaptor.forClass(RotateAnimation.class);
     }
 
     @After
     public void after() {
         verifyNoMoreInteractions(compassImageView);
+        verifyNoMoreInteractions(compassViewOrientationCorrector);
     }
 
     @Test
     public void onNewAzimut_AzimutInRadians_RotateImage() {
         // setup
         float azimutRadians = (float) Math.PI / 2;
+        boolean isDisplayUp = true;
+        when(compassViewOrientationCorrector.correctOrientation(azimutRadians, isDisplayUp)).thenReturn((double) azimutRadians);
         // act
-        testee.onNewAzimut(azimutRadians);
+        testee.onNewAzimut(azimutRadians, isDisplayUp);
         // assert
+        verify(compassViewOrientationCorrector).correctOrientation(azimutRadians, isDisplayUp);
         verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
         RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
         double azimutDegrees = Math.toDegrees(azimutRadians);
@@ -55,14 +62,33 @@ public class CompassImageViewUpdaterTest {
     }
 
     @Test
+    public void onNewAzimut_DisplayDown_RotateImage() {
+        // setup
+        float azimutRadians = (float) Math.PI / 2;
+        boolean isDisplayUp = false;
+        when(compassViewOrientationCorrector.correctOrientation(azimutRadians, isDisplayUp)).thenReturn((double) -azimutRadians);
+        // act
+        testee.onNewAzimut(azimutRadians, isDisplayUp);
+        // assert
+        verify(compassViewOrientationCorrector).correctOrientation(azimutRadians, isDisplayUp);
+        verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
+        RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
+        double azimutDegrees = Math.toDegrees(azimutRadians);
+        validateRotationAnimation(rotateAnimation, 0f, (float) azimutDegrees);
+    }
+
+    @Test
     public void onNewAzimut_CalledStillRotating_RotateImage() {
         // setup
         float azimutRadians0 = (float) Math.PI / 2;
         float azimutRadians1 = (float) Math.PI;
+        boolean isDisplayUp = true;
+        when(compassViewOrientationCorrector.correctOrientation(azimutRadians0, isDisplayUp)).thenReturn((double) azimutRadians0);
         // act
-        testee.onNewAzimut(azimutRadians0);
-        testee.onNewAzimut(azimutRadians1);
+        testee.onNewAzimut(azimutRadians0, isDisplayUp);
+        testee.onNewAzimut(azimutRadians1, isDisplayUp);
         // assert
+        verify(compassViewOrientationCorrector).correctOrientation(azimutRadians0, isDisplayUp);
         verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
         RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
         float azimutDegrees0 = (float) Math.toDegrees(azimutRadians0);
@@ -74,11 +100,16 @@ public class CompassImageViewUpdaterTest {
         // setup
         float azimutRadians0 = (float) Math.PI / 2;
         float azimutRadians1 = (float) Math.PI;
+        boolean isDisplayUp = true;
+        when(compassViewOrientationCorrector.correctOrientation(azimutRadians0, isDisplayUp)).thenReturn((double) azimutRadians0);
+        when(compassViewOrientationCorrector.correctOrientation(azimutRadians1, isDisplayUp)).thenReturn((double) azimutRadians1);
         // act
-        testee.onNewAzimut(azimutRadians0);
+        testee.onNewAzimut(azimutRadians0, isDisplayUp);
         ReflectionHelper.setFieldValue(testee, "isRotating", new AtomicBoolean(false));
-        testee.onNewAzimut(azimutRadians1);
+        testee.onNewAzimut(azimutRadians1, isDisplayUp);
         // assert
+        verify(compassViewOrientationCorrector).correctOrientation(azimutRadians0, isDisplayUp);
+        verify(compassViewOrientationCorrector).correctOrientation(azimutRadians1, isDisplayUp);
         verify(compassImageView, times(2)).startAnimation(rotateAnimationCaptor.capture());
         List<RotateAnimation> rotateAnimations = rotateAnimationCaptor.getAllValues();
         assertEquals(2, rotateAnimations.size());

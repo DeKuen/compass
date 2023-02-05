@@ -10,19 +10,22 @@ import ch.dekuen.android.compass.AzimutListener;
 
 public class CompassImageViewUpdater implements AzimutListener {
     private final ImageView compassImageView;
+    private final CompassViewOrientationCorrector compassViewOrientationCorrector;
     private final AtomicBoolean isRotating = new AtomicBoolean(false);
     private double lastDegree = 0;
     private final RotationEndListener rotationEndListener = new RotationEndListener();
 
-    public CompassImageViewUpdater(ImageView compassImageView) {
-        super();
+    public CompassImageViewUpdater(ImageView compassImageView, CompassViewOrientationCorrector compassViewOrientationCorrector) {
         this.compassImageView = compassImageView;
+        this.compassViewOrientationCorrector = compassViewOrientationCorrector;
     }
 
     @Override
-    public void onNewAzimut(float azimut) {
+    public void onNewAzimut(float azimutRadians, boolean isDisplayUp) {
         if(isRotating.compareAndSet(false, true)) {
-            double azimutDegrees = Math.toDegrees(azimut);
+            double azimutDegrees = Math.toDegrees(
+                    compassViewOrientationCorrector.correctOrientation(azimutRadians, isDisplayUp)
+            );
             // rotation animation - reverse turn azimutDegrees degrees
             RotateAnimation rotateAnimation = new RotateAnimation(
                     (float) lastDegree,

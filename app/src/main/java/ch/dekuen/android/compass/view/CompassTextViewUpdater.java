@@ -9,17 +9,17 @@ import ch.dekuen.android.compass.AzimutListener;
 public class CompassTextViewUpdater implements AzimutListener {
     static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###" + "°");
     private final TextView azimutTextView;
+    private final CompassViewOrientationCorrector compassViewOrientationCorrector;
 
-    public CompassTextViewUpdater(TextView azimutTextView) {
-        super();
+    public CompassTextViewUpdater(TextView azimutTextView, CompassViewOrientationCorrector compassViewOrientationCorrector) {
         this.azimutTextView = azimutTextView;
+        this.compassViewOrientationCorrector = compassViewOrientationCorrector;
     }
 
     @Override
-    public void onNewAzimut(float azimutRadians) {
+    public void onNewAzimut(float azimutRadians, boolean isDisplayUp) {
         double azimutDegrees = Math.toDegrees(
-                // force positive angle
-                (azimutRadians + 2 * Math.PI) % (2 * Math.PI)
+                compassViewOrientationCorrector.correctOrientation(azimutRadians, isDisplayUp)
         );
         String text = DECIMAL_FORMAT.format(azimutDegrees);
         azimutTextView.setText(text);

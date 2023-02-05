@@ -4,16 +4,20 @@ import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.Display;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+
+import java.util.function.Supplier;
 
 import ch.dekuen.android.compass.sensor.AzimutCalculator;
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
 import ch.dekuen.android.compass.sensor.CoordinatesLowPassFilter;
 import ch.dekuen.android.compass.view.CompassImageViewUpdater;
 import ch.dekuen.android.compass.view.CompassTextViewUpdater;
+import ch.dekuen.android.compass.view.CompassViewOrientationCorrector;
 
 public class MainActivity extends Activity {
 
@@ -41,15 +45,19 @@ public class MainActivity extends Activity {
 
     @NonNull
     private AzimutListener getAzimutListener() {
+        // display to get screen rotation
+        Display display = getWindowManager().getDefaultDisplay();
+        Supplier<Integer> getDisplayRotation = display::getRotation;
         // ImageView for compass image
         ImageView compassImageView = findViewById(R.id.compassImageView);
         // TextView that will display the azimut in degrees
         TextView azimutTextView = findViewById(R.id.azimutTextView);
-        CompassTextViewUpdater compassTextViewUpdater = new CompassTextViewUpdater(azimutTextView);
-        CompassImageViewUpdater compassImageViewUpdater = new CompassImageViewUpdater(compassImageView);
-        return azimut -> {
-            compassTextViewUpdater.onNewAzimut(azimut);
-            compassImageViewUpdater.onNewAzimut(azimut);
+        CompassViewOrientationCorrector compassViewOrientationCorrector = new CompassViewOrientationCorrector(getDisplayRotation);
+        CompassTextViewUpdater compassTextViewUpdater = new CompassTextViewUpdater(azimutTextView, compassViewOrientationCorrector);
+        CompassImageViewUpdater compassImageViewUpdater = new CompassImageViewUpdater(compassImageView, compassViewOrientationCorrector);
+        return (azimut, isDisplayUp) -> {
+            compassTextViewUpdater.onNewAzimut(azimut, isDisplayUp);
+            compassImageViewUpdater.onNewAzimut(azimut, isDisplayUp);
         };
     }
 

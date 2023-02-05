@@ -41,11 +41,23 @@ public class AzimutCalculator {
         float[] orientation = new float[3];
         // orientation contains: azimut, pitch and roll
         SensorManager.getOrientation(matrixR, orientation);
+
         // Azimuth, angle of rotation about the -z axis.
         // Angle between the device's y axis and the magnetic north pole.
         // The range of values is -π to π.
         float azimut = orientation[0];
+
+        // Pitch, angle of rotation about the x axis. Value is in orientation[1].
+        // Angle between the screen and the ground. Tilting the device toward the ground creates a positive pitch angle.
+        // The range of values is -π/2 to π/2.
+
+        // Roll, angle of rotation about the y axis.
+        // Tilting the left edge of the device toward the ground creates a positive roll angle.
+        // The range of values is -π to π.
+        float roll = orientation[2];
+
+        boolean isDisplayUp = Math.abs(roll) <= Math.PI / 2;
         // send to listener
-        listener.onNewAzimut(azimut);
+        listener.onNewAzimut(azimut, isDisplayUp);
     }
 }
