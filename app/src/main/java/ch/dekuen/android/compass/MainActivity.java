@@ -17,15 +17,11 @@ import java.util.function.Supplier;
 
 import ch.dekuen.android.compass.sensor.AzimutCalculator;
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
-import ch.dekuen.android.compass.sensor.CoordinatesLowPassFilter;
 import ch.dekuen.android.compass.view.CompassImageViewUpdater;
 import ch.dekuen.android.compass.view.CompassTextViewUpdater;
 import ch.dekuen.android.compass.view.CompassViewOrientationCorrector;
 
 public class MainActivity extends Activity {
-
-    // SENSOR_DELAY_GAME for fast response, alternatively use SENSOR_DELAY_UI or SENSOR_DELAY_NORMAL
-    private static final int SAMPLING_PERIOD_US = SensorManager.SENSOR_DELAY_GAME;
 
     private CompassSensorEventListener accelerationSensorEventListener;
     private CompassSensorEventListener magneticSensorEventListener;
@@ -40,10 +36,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         AzimutListener azimutListener = getAzimutListener();
         AzimutCalculator azimutCalculator = new AzimutCalculator(azimutListener);
-        CoordinatesLowPassFilter accelerationLPF = new CoordinatesLowPassFilter(azimutCalculator::onAccelerationSensorChanged);
-        CoordinatesLowPassFilter magneticLPF = new CoordinatesLowPassFilter(azimutCalculator::onMagneticSensorChanged);
-        accelerationSensorEventListener = new CompassSensorEventListener(accelerationLPF::onSensorChanged, Sensor.TYPE_ACCELEROMETER);
-        magneticSensorEventListener = new CompassSensorEventListener(magneticLPF::onSensorChanged, Sensor.TYPE_MAGNETIC_FIELD);
+        accelerationSensorEventListener = new CompassSensorEventListener(azimutCalculator::onAccelerationSensorChanged, Sensor.TYPE_ACCELEROMETER, AppConstants.LOW_PASS_FILTER_ALPHA);
+        magneticSensorEventListener = new CompassSensorEventListener(azimutCalculator::onMagneticSensorChanged, Sensor.TYPE_MAGNETIC_FIELD, AppConstants.LOW_PASS_FILTER_ALPHA);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
 
@@ -74,8 +68,8 @@ public class MainActivity extends Activity {
         Handler sensorHandler = new Handler(sensorHandlerThread.getLooper());
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(accelerationSensorEventListener, accelerometer, SAMPLING_PERIOD_US, sensorHandler);
-        sensorManager.registerListener(magneticSensorEventListener, magnetometer, SAMPLING_PERIOD_US, sensorHandler);
+        sensorManager.registerListener(accelerationSensorEventListener, accelerometer, AppConstants.SAMPLING_PERIOD_US, sensorHandler);
+        sensorManager.registerListener(magneticSensorEventListener, magnetometer, AppConstants.SAMPLING_PERIOD_US, sensorHandler);
     }
 
     @Override
