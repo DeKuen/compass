@@ -68,14 +68,6 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        // to stop the listener and save battery
-        sensorManager.unregisterListener(compassSensorEventListener);
-        sensorHandlerThread.quitSafely();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 
@@ -83,15 +75,6 @@ public class MainActivity extends Activity {
         sensorHandlerThread.start();
         sensorHandler = new Handler(sensorHandlerThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
 
-        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(compassSensorEventListener, accelerometer, SAMPLING_PERIOD_US, sensorHandler);
-        sensorManager.registerListener(compassSensorEventListener, magnetometer, SAMPLING_PERIOD_US, sensorHandler);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         sensorManager.registerListener(accelerationSensorEventListener, accelerometer, SAMPLING_PERIOD_US);
@@ -104,6 +87,7 @@ public class MainActivity extends Activity {
         // to stop the listeners and save battery
         sensorManager.unregisterListener(accelerationSensorEventListener);
         sensorManager.unregisterListener(magneticSensorEventListener);
+        sensorHandlerThread.quitSafely();
     }
 
     private static class MyHandler extends Handler {
