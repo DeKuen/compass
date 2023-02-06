@@ -2,7 +2,7 @@ package ch.dekuen.android.compass.sensor;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static ch.dekuen.android.compass.sensor.CoordinatesLowPassFilter.LOW_PASS_FILTER_ALPHA;
+import static ch.dekuen.android.compass.AppConstants.LOW_PASS_FILTER_ALPHA;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,7 +22,7 @@ public class CoordinatesLowPassFilterTest {
 
     @Before
     public void before() {
-        testee = new CoordinatesLowPassFilter(consumer);
+        testee = new CoordinatesLowPassFilter(consumer, LOW_PASS_FILTER_ALPHA);
     }
 
     @After
@@ -55,8 +55,8 @@ public class CoordinatesLowPassFilterTest {
         assertArrayEquals(updates0, measurements.get(0));
         float[] expected1 = {
                 LOW_PASS_FILTER_ALPHA,
-                CoordinatesLowPassFilter.applyFilter(updates0[1], updates1[1]),
-                CoordinatesLowPassFilter.applyFilter(updates0[2], updates1[2])
+                testee.applyFilter(updates0[1], updates1[1]),
+                testee.applyFilter(updates0[2], updates1[2])
         };
         assertArrayEquals(expected1, measurements.get(1));
         measurements.clear();

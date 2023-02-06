@@ -3,13 +3,15 @@ package ch.dekuen.android.compass.sensor;
 import java.util.function.Consumer;
 
 public class CoordinatesLowPassFilter {
-    static final float LOW_PASS_FILTER_ALPHA = 0.97f;
-    public static final float LOW_PASS_FILTER_ONE_MINUS_ALPHA = 1 - LOW_PASS_FILTER_ALPHA;
+    private final float oneMinusAlpha;
     private final Consumer<float[]> consumer;
+    private final float alpha;
     private float[] measurements;
 
-    public CoordinatesLowPassFilter(Consumer<float[]> consumer) {
+    public CoordinatesLowPassFilter(Consumer<float[]> consumer, float alpha) {
         this.consumer = consumer;
+        this.alpha = alpha;
+        oneMinusAlpha = 1 - alpha;
     }
 
     public void onSensorChanged(float[] updates) {
@@ -23,7 +25,7 @@ public class CoordinatesLowPassFilter {
         consumer.accept(measurements);
     }
 
-    static float applyFilter(float before, float update) {
-        return LOW_PASS_FILTER_ALPHA * before + LOW_PASS_FILTER_ONE_MINUS_ALPHA * update;
+    float applyFilter(float before, float update) {
+        return alpha * before + oneMinusAlpha * update;
     }
 }
