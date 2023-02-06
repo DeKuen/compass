@@ -37,9 +37,8 @@ public class CompassImageViewUpdater implements AzimutListener {
             // set the compass animation after the end of the reservation status
             rotateAnimation.setFillAfter(true);
             rotateAnimation.setAnimationListener(rotationEndListener);
-            // Start animation of compass image
-            // todo enable
-            // compassImageView.startAnimation(rotateAnimation);
+            // Start animation of compass image in UI thread
+            compassImageView.post(() -> compassImageView.startAnimation(rotateAnimation));
         }
     }
 

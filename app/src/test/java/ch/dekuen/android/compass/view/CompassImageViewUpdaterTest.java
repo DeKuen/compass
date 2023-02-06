@@ -56,6 +56,7 @@ public class CompassImageViewUpdaterTest {
         testee.onNewAzimut(azimutRadians, isDisplayUp);
         // assert
         verify(compassViewOrientationCorrector).correctOrientation(azimutRadians, isDisplayUp);
+        verifyViewPost(1);
         verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
         RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
         double azimutDegrees = Math.toDegrees(azimutRadians);
@@ -72,6 +73,7 @@ public class CompassImageViewUpdaterTest {
         testee.onNewAzimut(azimutRadians, isDisplayUp);
         // assert
         verify(compassViewOrientationCorrector).correctOrientation(azimutRadians, isDisplayUp);
+        verifyViewPost(1);
         verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
         RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
         double azimutDegrees = Math.toDegrees(azimutRadians);
@@ -90,6 +92,7 @@ public class CompassImageViewUpdaterTest {
         testee.onNewAzimut(azimutRadians1, isDisplayUp);
         // assert
         verify(compassViewOrientationCorrector).correctOrientation(azimutRadians0, isDisplayUp);
+        verifyViewPost(1);
         verify(compassImageView).startAnimation(rotateAnimationCaptor.capture());
         RotateAnimation rotateAnimation = rotateAnimationCaptor.getValue();
         float azimutDegrees0 = (float) Math.toDegrees(azimutRadians0);
@@ -111,6 +114,7 @@ public class CompassImageViewUpdaterTest {
         // assert
         verify(compassViewOrientationCorrector).correctOrientation(azimutRadians0, isDisplayUp);
         verify(compassViewOrientationCorrector).correctOrientation(azimutRadians1, isDisplayUp);
+        verifyViewPost(2);
         verify(compassImageView, times(2)).startAnimation(rotateAnimationCaptor.capture());
         List<RotateAnimation> rotateAnimations = rotateAnimationCaptor.getAllValues();
         assertEquals(2, rotateAnimations.size());
@@ -120,6 +124,13 @@ public class CompassImageViewUpdaterTest {
         rotateAnimation = rotateAnimations.get(1);
         float azimutDegrees1 = (float) Math.toDegrees(azimutRadians1);
         validateRotationAnimation(rotateAnimation, -azimutDegrees0, -azimutDegrees1);
+    }
+
+    private void verifyViewPost(int wantedNumberOfInvocations) {
+
+        ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
+        verify(compassImageView, times(wantedNumberOfInvocations)).post(captor.capture());
+        captor.getAllValues().forEach(Runnable::run);
     }
 
     private void validateRotationAnimation(RotateAnimation rotateAnimation, float fromDegrees, float toDegrees) {

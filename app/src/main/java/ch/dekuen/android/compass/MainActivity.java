@@ -6,7 +6,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Message;
 import android.os.Process;
 import android.view.Display;
 import android.widget.ImageView;
@@ -31,7 +30,6 @@ public class MainActivity extends Activity {
     private CompassSensorEventListener accelerationSensorEventListener;
     private CompassSensorEventListener magneticSensorEventListener;
     private HandlerThread sensorHandlerThread;
-    private Handler sensorHandler;
 
     // device sensor manager
     private SensorManager sensorManager;
@@ -71,14 +69,13 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        sensorHandlerThread = new HandlerThread("Sensor thread", Process.THREAD_PRIORITY_MORE_FAVORABLE);
-        sensorHandlerThread.start();
-        sensorHandler = new Handler(sensorHandlerThread.getLooper()); //Blocks until looper is prepared, which is fairly quick
-
+        sensorHandlerThread = startBackgroundHandlerThread("Sensor thread");
+        //Blocks until looper is prepared, which is fairly quick
+        Handler sensorHandler = new Handler(sensorHandlerThread.getLooper());
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(accelerationSensorEventListener, accelerometer, SAMPLING_PERIOD_US);
-        sensorManager.registerListener(magneticSensorEventListener, magnetometer, SAMPLING_PERIOD_US);
+        sensorManager.registerListener(accelerationSensorEventListener, accelerometer, SAMPLING_PERIOD_US, sensorHandler);
+        sensorManager.registerListener(magneticSensorEventListener, magnetometer, SAMPLING_PERIOD_US, sensorHandler);
     }
 
     @Override
@@ -90,11 +87,11 @@ public class MainActivity extends Activity {
         sensorHandlerThread.quitSafely();
     }
 
-    private static class MyHandler extends Handler {
-        @Override
-        public void handleMessage(Message message) {
-
-        }
+    private static HandlerThread startBackgroundHandlerThread(String threadName) {
+        HandlerThread handlerThread = new HandlerThread(threadName, Process.THREAD_PRIORITY_LESS_FAVORABLE);
+        // seems to be necessary to set priority by setter
+        handlerThread.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        handlerThread.start();
+        return handlerThread;
     }
-
 }
