@@ -17,7 +17,6 @@ import java.util.function.Supplier;
 
 import ch.dekuen.android.compass.sensor.AzimutCalculator;
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
-import ch.dekuen.android.compass.sensor.CoordinatesLowPassFilter;
 import ch.dekuen.android.compass.view.CompassImageViewUpdater;
 import ch.dekuen.android.compass.view.CompassTextViewUpdater;
 import ch.dekuen.android.compass.view.CompassViewOrientationCorrector;
@@ -37,10 +36,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         AzimutListener azimutListener = getAzimutListener();
         AzimutCalculator azimutCalculator = new AzimutCalculator(azimutListener);
-        CoordinatesLowPassFilter accelerationLPF = new CoordinatesLowPassFilter(azimutCalculator::onAccelerationSensorChanged, AppConstants.LOW_PASS_FILTER_ALPHA);
-        CoordinatesLowPassFilter magneticLPF = new CoordinatesLowPassFilter(azimutCalculator::onMagneticSensorChanged, AppConstants.LOW_PASS_FILTER_ALPHA);
-        accelerationSensorEventListener = new CompassSensorEventListener(accelerationLPF::onSensorChanged, Sensor.TYPE_ACCELEROMETER);
-        magneticSensorEventListener = new CompassSensorEventListener(magneticLPF::onSensorChanged, Sensor.TYPE_MAGNETIC_FIELD);
+        accelerationSensorEventListener = new CompassSensorEventListener(azimutCalculator::onAccelerationSensorChanged, Sensor.TYPE_ACCELEROMETER, AppConstants.LOW_PASS_FILTER_ALPHA);
+        magneticSensorEventListener = new CompassSensorEventListener(azimutCalculator::onMagneticSensorChanged, Sensor.TYPE_MAGNETIC_FIELD, AppConstants.LOW_PASS_FILTER_ALPHA);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
 
