@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        HandlerThread calculatorHandlerThread = startBackgroundHandlerThread("CalculatorThread");
+        HandlerThread calculatorHandlerThread = startBackgroundHandlerThread("calculatorThread");
         Looper calculatorLooper = calculatorHandlerThread.getLooper();
 
         registerListener(Sensor.TYPE_ACCELEROMETER, "accelerationSensorThread", calculatorLooper, azimutCalculator::onAccelerationSensorChanged);
