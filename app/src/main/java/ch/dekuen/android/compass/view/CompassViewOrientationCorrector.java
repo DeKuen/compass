@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import ch.dekuen.android.compass.MathConstants;
 
 public class CompassViewOrientationCorrector {
+    // Supplier instead of Display because the later can't be mocked in tests
     private final Supplier<Integer> getDisplayRotation;
 
     public CompassViewOrientationCorrector(Supplier<Integer> getDisplayRotation) {
