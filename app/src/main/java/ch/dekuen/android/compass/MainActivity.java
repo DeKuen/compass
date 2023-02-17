@@ -27,37 +27,35 @@ public class MainActivity extends Activity {
 
     private final List<SensorEventListener> sensorEventListeners = new ArrayList<>();
     private final List<HandlerThread> handlerThreads = new ArrayList<>();
+    private AzimutCalculator azimutCalculator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AzimutListener azimutListener = getAzimutListener();
+        azimutCalculator = new AzimutCalculator(azimutListener);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        AzimutListener azimutListener = getAzimutListener();
-        AzimutCalculator azimutCalculator = new AzimutCalculator(azimutListener);
-
         HandlerThread calculatorHandlerThread = startBackgroundHandlerThread("CalculatorThread");
         Looper calculatorLooper = calculatorHandlerThread.getLooper();
 
-        Handler callbackHandler = new Handler(calculatorLooper);
-        registerListener(Sensor.TYPE_ACCELEROMETER, "accelerationSensorThread", callbackHandler, azimutCalculator::onAccelerationSensorChanged);
+        registerListener(Sensor.TYPE_ACCELEROMETER, "accelerationSensorThread", calculatorLooper, azimutCalculator::onAccelerationSensorChanged);
 
-        callbackHandler = new Handler(calculatorLooper);
-        registerListener(Sensor.TYPE_MAGNETIC_FIELD, "magneticSensorThread", callbackHandler, azimutCalculator::onMagneticSensorChanged);
+        registerListener(Sensor.TYPE_MAGNETIC_FIELD, "magneticSensorThread", calculatorLooper, azimutCalculator::onMagneticSensorChanged);
     }
 
-    private void registerListener(int sensorType, String listenerThreadName, Handler callbackHandler, Consumer<float[]> consumer) {
+    private void registerListener(int sensorType, String listenerThreadName, Looper looper, Consumer<float[]> consumer) {
+        Handler handler = new Handler(looper);
+        CompassSensorEventListener listener = new CompassSensorEventListener(handler, consumer, sensorType, AppConstants.LOW_PASS_FILTER_ALPHA);
+
         HandlerThread listenerHandlerThread = startBackgroundHandlerThread(listenerThreadName);
-
-        //Blocks until looper is prepared, which is fairly quick
         Handler listenerHandler = new Handler(listenerHandlerThread.getLooper());
-
-        CompassSensorEventListener listener = new CompassSensorEventListener(callbackHandler, consumer, sensorType, AppConstants.LOW_PASS_FILTER_ALPHA);
 
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor sensor = sensorManager.getDefaultSensor(sensorType);
