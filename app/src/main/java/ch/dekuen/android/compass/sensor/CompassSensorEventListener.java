@@ -4,21 +4,23 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 public class CompassSensorEventListener implements SensorEventListener {
     private final Handler handler;
+    private final Consumer<float[]> consumer;
     private final int sensorType;
     private final float alpha;
     private final float oneMinusAlpha;
     private float[] measurements;
 
-    public CompassSensorEventListener(Handler handler, int sensorType, float alpha) {
+    public CompassSensorEventListener(Handler handler, Consumer<float[]> consumer, int sensorType, float alpha) {
         this.handler = handler;
+        this.consumer = consumer;
         this.sensorType = sensorType;
         this.alpha = alpha;
         oneMinusAlpha = 1 - alpha;
@@ -48,11 +50,6 @@ public class CompassSensorEventListener implements SensorEventListener {
             measurements[1] = applyFilter(measurements[1], event.values[1]);
             measurements[2] = applyFilter(measurements[2], event.values[2]);
         }
-        Message message = handler.obtainMessage();
-        message.obj = Arrays.copyOf(measurements, measurements.length);
-
-
-
 
         Thread thread = Thread.currentThread();
         String s = String.format(Locale.getDefault(),
@@ -64,7 +61,8 @@ public class CompassSensorEventListener implements SensorEventListener {
         );
         Log.d(getClass().getName(), s);
 
-        handler.handleMessage(message);
+        float[] copyOf = Arrays.copyOf(measurements, measurements.length);
+        handler.post(() -> consumer.accept(copyOf));
     }
 
     private float applyFilter(float before, float update) {

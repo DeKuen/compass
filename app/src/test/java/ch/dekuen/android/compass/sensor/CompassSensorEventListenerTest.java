@@ -43,11 +43,13 @@ public class CompassSensorEventListenerTest {
     public void after() {
         verifyNoMoreInteractions(handler);
     }
+    
+    // TODO: replace null with an actual Consumer
 
     @Test
     public void onAccuracyChanged_AnyInput_consumeNothing() {
         // setup
-        testee = new CompassSensorEventListener(handler, SENSOR_TYPE, 0f);
+        testee = new CompassSensorEventListener(handler, null, SENSOR_TYPE, 0f);
         Sensor sensor = mock(Sensor.class);
         // act
         testee.onAccuracyChanged(sensor, SENSOR_TYPE);
@@ -58,7 +60,7 @@ public class CompassSensorEventListenerTest {
     @Test
     public void onSensorChanged_NullEvent_consumeNothing() {
         // setup
-        testee = new CompassSensorEventListener(handler, SENSOR_TYPE, 0f);
+        testee = new CompassSensorEventListener(handler, null, SENSOR_TYPE, 0f);
         // act & assert
         assertDoesNotThrow(() -> testee.onSensorChanged(null));
     }
@@ -66,7 +68,7 @@ public class CompassSensorEventListenerTest {
     @Test
     public void onSensorChanged_NullSensor_consumeNothing() {
         // setup
-        testee = new CompassSensorEventListener(handler, SENSOR_TYPE, 0f);
+        testee = new CompassSensorEventListener(handler, null, SENSOR_TYPE, 0f);
         SensorEvent event = mock(SensorEvent.class);
         // act
         testee.onSensorChanged(event);
@@ -77,7 +79,7 @@ public class CompassSensorEventListenerTest {
     @Test
     public void onSensorChanged_UnknownSensorType_consumeNothing() {
         // setup
-        testee = new CompassSensorEventListener(handler, SENSOR_TYPE, 0f);
+        testee = new CompassSensorEventListener(handler, null, SENSOR_TYPE, 0f);
         Sensor sensor = mock(Sensor.class);
         SensorEvent event = mockEvent(sensor, 7, null);
         // act
@@ -89,7 +91,7 @@ public class CompassSensorEventListenerTest {
     @Test
     public void onSensorChanged_FirstUpdate_consumeData() {
         // setup
-        testee = new CompassSensorEventListener(handler, SENSOR_TYPE, 0f);
+        testee = new CompassSensorEventListener(handler, null, SENSOR_TYPE, 0f);
         Sensor sensor = mock(Sensor.class);
         SensorEvent event = mockEvent(sensor, SENSOR_TYPE, VALUES);
         // act
@@ -106,7 +108,7 @@ public class CompassSensorEventListenerTest {
     public void onSensorChanged_TwoUpdates_ConsumeFilteredData() {
         // setup
         float alpha = 0.75f;
-        testee = new CompassSensorEventListener(handler, SENSOR_TYPE, alpha);
+        testee = new CompassSensorEventListener(handler, null, SENSOR_TYPE, alpha);
         float[] updates0 = {0f, 2f, 3f};
         float[] updates1 = {-0f, -2f, -3f};
         Sensor sensor = mock(Sensor.class);

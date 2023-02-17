@@ -15,7 +15,6 @@ import android.view.Display;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -49,20 +48,20 @@ public class MainActivity extends Activity {
         HandlerThread calculatorHandlerThread = startBackgroundHandlerThread("CalculatorThread");
         Looper calculatorLooper = calculatorHandlerThread.getLooper();
 
-        Handler callbackHandler = new MyHandler<>(calculatorLooper, azimutCalculator::onAccelerationSensorChanged);
-        registerListener(Sensor.TYPE_ACCELEROMETER, "accelerationSensorThread", callbackHandler);
+        Handler callbackHandler = new MyHandler(calculatorLooper);
+        registerListener(Sensor.TYPE_ACCELEROMETER, "accelerationSensorThread", callbackHandler, azimutCalculator::onAccelerationSensorChanged);
 
-        callbackHandler = new MyHandler<>(calculatorLooper, azimutCalculator::onMagneticSensorChanged);
-        registerListener(Sensor.TYPE_MAGNETIC_FIELD, "magneticSensorThread", callbackHandler);
+        callbackHandler = new MyHandler(calculatorLooper);
+        registerListener(Sensor.TYPE_MAGNETIC_FIELD, "magneticSensorThread", callbackHandler, azimutCalculator::onMagneticSensorChanged);
     }
 
-    private void registerListener(int sensorType, String listenerThreadName, Handler callbackHandler) {
+    private void registerListener(int sensorType, String listenerThreadName, Handler callbackHandler, Consumer<float[]> consumer) {
         HandlerThread listenerHandlerThread = startBackgroundHandlerThread(listenerThreadName);
 
         //Blocks until looper is prepared, which is fairly quick
         Handler listenerHandler = new Handler(listenerHandlerThread.getLooper());
 
-        CompassSensorEventListener listener = new CompassSensorEventListener(callbackHandler, sensorType, AppConstants.LOW_PASS_FILTER_ALPHA);
+        CompassSensorEventListener listener = new CompassSensorEventListener(callbackHandler, consumer, sensorType, AppConstants.LOW_PASS_FILTER_ALPHA);
 
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor sensor = sensorManager.getDefaultSensor(sensorType);
@@ -114,10 +113,9 @@ public class MainActivity extends Activity {
      * Instances of static inner classes do not hold an implicit
      * reference to their outer class.
      */
-    private static class MyHandler<T> extends Handler {
-        private final WeakReference<Consumer<T>> weakReference;
+    private static class MyHandler extends Handler {
 
-        public MyHandler(Looper looper, Consumer<T> consumer) {
+        public MyHandler(Looper looper) {
             super(looper);
 
             Thread thread = Thread.currentThread();
@@ -129,14 +127,10 @@ public class MainActivity extends Activity {
                     thread.getPriority()
             );
             Log.d(getClass().getName(), s);
-
-            weakReference = new WeakReference<>(consumer);
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void handleMessage(Message msg) {
-
             Thread thread = Thread.currentThread();
             String s = String.format(Locale.getDefault(),
                     "%s : uses Thread name=%s, id=%d, priority=%d",
@@ -146,11 +140,6 @@ public class MainActivity extends Activity {
                     thread.getPriority()
             );
             Log.d(getClass().getName(), s);
-
-            Consumer<T> consumer = weakReference.get();
-            if (consumer != null) {
-                consumer.accept((T) msg.obj);
-            }
         }
     }
 }
