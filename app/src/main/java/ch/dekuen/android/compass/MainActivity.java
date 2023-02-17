@@ -16,7 +16,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import ch.dekuen.android.compass.sensor.AzimutCalculator;
 import ch.dekuen.android.compass.sensor.CompassSensorEventListener;
@@ -90,13 +89,12 @@ public class MainActivity extends Activity {
     private AzimutListener getAzimutListener() {
         // display to get screen rotation
         Display display = getWindowManager().getDefaultDisplay();
-        Supplier<Integer> getDisplayRotation = display::getRotation;
-        // ImageView for compass image
-        ImageView compassImageView = findViewById(R.id.compassImageView);
+        CompassViewOrientationCorrector compassViewOrientationCorrector = new CompassViewOrientationCorrector(display::getRotation);
         // TextView that will display the azimut in degrees
         TextView azimutTextView = findViewById(R.id.azimutTextView);
-        CompassViewOrientationCorrector compassViewOrientationCorrector = new CompassViewOrientationCorrector(getDisplayRotation);
         CompassTextViewUpdater compassTextViewUpdater = new CompassTextViewUpdater(azimutTextView, compassViewOrientationCorrector);
+        // ImageView for compass image
+        ImageView compassImageView = findViewById(R.id.compassImageView);
         CompassImageViewUpdater compassImageViewUpdater = new CompassImageViewUpdater(compassImageView, compassViewOrientationCorrector);
         return (azimut, isDisplayUp) -> {
             compassTextViewUpdater.onNewAzimut(azimut, isDisplayUp);
