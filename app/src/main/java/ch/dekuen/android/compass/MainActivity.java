@@ -8,16 +8,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.os.Message;
 import android.os.Process;
-import android.util.Log;
 import android.view.Display;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -48,10 +45,10 @@ public class MainActivity extends Activity {
         HandlerThread calculatorHandlerThread = startBackgroundHandlerThread("CalculatorThread");
         Looper calculatorLooper = calculatorHandlerThread.getLooper();
 
-        Handler callbackHandler = new MyHandler(calculatorLooper);
+        Handler callbackHandler = new Handler(calculatorLooper);
         registerListener(Sensor.TYPE_ACCELEROMETER, "accelerationSensorThread", callbackHandler, azimutCalculator::onAccelerationSensorChanged);
 
-        callbackHandler = new MyHandler(calculatorLooper);
+        callbackHandler = new Handler(calculatorLooper);
         registerListener(Sensor.TYPE_MAGNETIC_FIELD, "magneticSensorThread", callbackHandler, azimutCalculator::onMagneticSensorChanged);
     }
 
@@ -105,41 +102,5 @@ public class MainActivity extends Activity {
             compassTextViewUpdater.onNewAzimut(azimut, isDisplayUp);
             compassImageViewUpdater.onNewAzimut(azimut, isDisplayUp);
         };
-    }
-
-    // use static inner class to prevent memory leak, see:
-    // https://www.androiddesignpatterns.com/2013/01/inner-class-handler-memory-leak.html
-    /**
-     * Instances of static inner classes do not hold an implicit
-     * reference to their outer class.
-     */
-    private static class MyHandler extends Handler {
-
-        public MyHandler(Looper looper) {
-            super(looper);
-
-            Thread thread = Thread.currentThread();
-            String s = String.format(Locale.getDefault(),
-                    "%s : uses Thread name=%s, id=%d, priority=%d",
-                    this,
-                    thread.getName(),
-                    thread.getId(),
-                    thread.getPriority()
-            );
-            Log.d(getClass().getName(), s);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            Thread thread = Thread.currentThread();
-            String s = String.format(Locale.getDefault(),
-                    "%s : uses Thread name=%s, id=%d, priority=%d",
-                    this,
-                    thread.getName(),
-                    thread.getId(),
-                    thread.getPriority()
-            );
-            Log.d(getClass().getName(), s);
-        }
     }
 }
