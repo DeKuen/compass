@@ -3,8 +3,6 @@ package ch.dekuen.android.compass.sensor;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import java.util.Locale;
-
 import ch.dekuen.android.compass.AzimutListener;
 import ch.dekuen.android.compass.MathConstants;
 
@@ -28,18 +26,6 @@ public class AzimutCalculator {
     }
 
     private void calculate() {
-
-
-        Thread thread = Thread.currentThread();
-        String s = String.format(Locale.getDefault(),
-                "%s : uses Thread name=%s, id=%d, priority=%d",
-                this,
-                thread.getName(),
-                thread.getId(),
-                thread.getPriority()
-        );
-        Log.d(getClass().getName(), s);
-
         if (accelerationMeasurements == null) {
             Log.i(getClass().getName(), "accelerationMeasurements is still null");
             return;

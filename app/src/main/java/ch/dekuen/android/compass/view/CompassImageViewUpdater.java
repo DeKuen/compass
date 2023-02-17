@@ -1,11 +1,9 @@
 package ch.dekuen.android.compass.view;
 
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.dekuen.android.compass.AzimutListener;
@@ -24,18 +22,6 @@ public class CompassImageViewUpdater implements AzimutListener {
 
     @Override
     public void onNewAzimut(float azimutRadians, boolean isDisplayUp) {
-
-
-        Thread thread = Thread.currentThread();
-        String s = String.format(Locale.getDefault(),
-                "%s : uses Thread name=%s, id=%d, priority=%d",
-                this,
-                thread.getName(),
-                thread.getId(),
-                thread.getPriority()
-        );
-        Log.d(getClass().getName(), s);
-
         if(isRotating.compareAndSet(false, true)) {
             double azimutDegrees = Math.toDegrees(
                     compassViewOrientationCorrector.correctOrientation(azimutRadians, isDisplayUp)

@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.function.Consumer;
 
 public class CompassSensorEventListener implements SensorEventListener {
@@ -50,17 +49,6 @@ public class CompassSensorEventListener implements SensorEventListener {
             measurements[1] = applyFilter(measurements[1], event.values[1]);
             measurements[2] = applyFilter(measurements[2], event.values[2]);
         }
-
-        Thread thread = Thread.currentThread();
-        String s = String.format(Locale.getDefault(),
-                "%s : uses Thread name=%s, id=%d, priority=%d",
-                this,
-                thread.getName(),
-                thread.getId(),
-                thread.getPriority()
-        );
-        Log.d(getClass().getName(), s);
-
         float[] copyOf = Arrays.copyOf(measurements, measurements.length);
         handler.post(() -> consumer.accept(copyOf));
     }
