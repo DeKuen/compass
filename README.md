@@ -10,7 +10,7 @@ JUnit5 did not work in the end.
 ### Angles in radians vs. 360°
 All angles on the sensor side are in radians, while rotating an image with RotateAnimation takes degrees as parameters.
 
-### Low-pass filter
+### Low-pass filter LPF
 A simple low-pass-filter reduces noise in the sensor values.
 ```
 azimut = 0.97f * azimut + (1 - 0.97f) * newAzimut;
@@ -26,6 +26,19 @@ Maybe it has something to do with SensorEvent being written in Kotlin and Androi
 ### Math.atan2(y, x) takes y as first parameter
 
 Lost way to much time with this.
+
+### Threading
+Three additional threads are used.
+- Two to listen to each hardware sensor 
+- One to calculate the displayed azimut
+- Main thread handles startup/shutdown and must handle all UI-updates
+
+| Thread                   | used where                                       | gets input from                 |
+|--------------------------|--------------------------------------------------|---------------------------------|
+| Main thread              | Startup & Shutdown, UI-Updates                   | calculatorThread for UI updates |
+| accelerationSensorThread | updates from acceleration sensor, LPF            | hardware sensor                 |
+| magneticSensorThread     | updates from magnetic field sensor, LPF          | hardware sensor                 |
+| calculatorThread         | calculates displayed azimut (text image rotation | sensor threads                  |
 
 ## Links
 Sensor Coordinate System
