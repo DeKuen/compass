@@ -1,0 +1,30 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/compass_header">
+
+        <SeekBarPreference
+            android:key="lpfAlpha"
+            android:title="lpfAlpha"
+            android:summary="lpfAlpha"
+            android:max="1000"
+            android:defaultValue="970" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Sync">
+
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="Sync" />
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="attachment"
+            app:summaryOff="attachment_summary_off"
+            app:summaryOn="attachment_summary_on"
+            app:title="Attachment" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
