@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/CompassFragment">
+    app:startDestination="@id/compassFragment">
 
     <fragment
-        android:id="@+id/CompassFragment"
+        android:id="@+id/compassFragment"
         android:name="ch.dekuen.android.compass.CompassFragment"
         android:label="@string/compass_fragment_label"
         tools:layout="@layout/fragment_compass">
