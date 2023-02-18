@@ -3,6 +3,7 @@ package ch.dekuen.android.compass.view;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 import ch.dekuen.android.compass.AzimutListener;
 
@@ -12,7 +13,7 @@ public class CompassTextViewUpdater implements AzimutListener {
     private final CompassViewOrientationCorrector compassViewOrientationCorrector;
 
     public CompassTextViewUpdater(TextView azimutTextView, CompassViewOrientationCorrector compassViewOrientationCorrector) {
-        this.azimutTextView = azimutTextView;
+        this.azimutTextView = Objects.requireNonNull(azimutTextView);
         this.compassViewOrientationCorrector = compassViewOrientationCorrector;
     }
 

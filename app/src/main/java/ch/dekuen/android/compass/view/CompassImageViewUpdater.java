@@ -4,6 +4,7 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import ch.dekuen.android.compass.AzimutListener;
@@ -16,7 +17,7 @@ public class CompassImageViewUpdater implements AzimutListener {
     private final RotationEndListener rotationEndListener = new RotationEndListener();
 
     public CompassImageViewUpdater(ImageView compassImageView, CompassViewOrientationCorrector compassViewOrientationCorrector) {
-        this.compassImageView = compassImageView;
+        this.compassImageView = Objects.requireNonNull(compassImageView);
         this.compassViewOrientationCorrector = compassViewOrientationCorrector;
     }
 
