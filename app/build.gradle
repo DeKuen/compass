@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'ch.dekuen.android.compass'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "ch.dekuen.android.compassapp"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 4
         versionName "1.0.4"
 
